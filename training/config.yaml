@@ -1,0 +1,31 @@
+# Default training configuration (Sen1Floods11 hand-labelled, binary water segmentation).
+# Any key can be overridden from the CLI:  python -m training.train --set model.encoder=resnet18
+seed: 42
+run_name: null            # defaults to "<arch>_<encoder>_<modality>"
+
+data:
+  modality: s1s2          # s1 (VV,VH) | s2 (13 MSI bands) | s1s2 (15 bands) | rgb (S2 B4,B3,B2, 8-bit stretch)
+  crop_size: 256          # random training crops; validation/test use full 512x512 chips
+  crops_per_chip: 4       # random crops drawn from every training chip per epoch
+  num_workers: 2          # keep low: 16 GB RAM laptop, Windows spawn-based workers
+  augment: true           # flips + 90-degree rotations (+ colour jitter for rgb)
+
+model:
+  arch: unet              # unet | deeplabv3plus
+  encoder: resnet34
+  encoder_weights: imagenet   # null to train from scratch
+
+train:
+  epochs: 60
+  batch_size: 8
+  grad_accum: 1
+  lr: 0.0005
+  weight_decay: 0.0001
+  warmup_epochs: 2
+  amp: true               # torch.autocast float16 on CUDA
+  bce_weight: 1.0
+  dice_weight: 1.0
+  pos_weight: null        # optional BCE positive-class weight; null = estimated from training labels
+  early_stopping_patience: 15
+  monitor: val_iou_water  # checkpoint selection metric (validation split only)
+  threshold: 0.5

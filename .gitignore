@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Secrets / local config
+.env
+
+# Large data and model artifacts (kept out of Git; see data/README.md, artifacts/README.md)
+data/raw/
+data/processed/
+data/osm_cache/
+artifacts/checkpoints/
+artifacts/**/*.pt
+artifacts/**/*.pth
+outputs/uploads/
+outputs/predictions/
+*.part
+*.corrupt-*
+*.log
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

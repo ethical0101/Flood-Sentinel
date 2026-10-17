@@ -1,0 +1,101 @@
+{
+  "_comment": "Routing study areas = held-out Sen1Floods11 chips (test split; never used for training or model selection) whose footprint contains a mapped OSM drive network. Road counts were checked with one Overpass 'out count' query per candidate on 2026-10-18. Imagery dates come from Sen1Floods11_Metadata.geojson; the OSM network is current, so roads built or removed since the flood date are a known temporal mismatch. Default start/end pairs were selected automatically (scripts/select_demo_routes.py: 250 random node pairs in the largest strongly-connected component, >=1.5 km apart; pick = most predicted-flooded road avoided with <=40% detour) to demonstrate the trade-off; they are not real evacuation requests.",
+  "areas": [
+    {
+      "id": "spain_7370579",
+      "chip_id": "Spain_7370579",
+      "name": "Segura lowlands, SE Spain (A)",
+      "region": "Spain, approx. 38.11 N, 0.76 W",
+      "event": "September 2019 flood (S1 2019-09-17, S2 2019-09-18)",
+      "description": "Dense rural-urban road grid in an irrigated floodplain; extensive standing water.",
+      "default_start": [
+        38.09686,
+        -0.75361
+      ],
+      "default_end": [
+        38.11842,
+        -0.75414
+      ]
+    },
+    {
+      "id": "spain_6095801",
+      "chip_id": "Spain_6095801",
+      "name": "Segura lowlands, SE Spain (B)",
+      "region": "Spain, approx. 38.11 N, 0.80 W",
+      "event": "September 2019 flood (S1 2019-09-17, S2 2019-09-18)",
+      "description": "Adjacent tile to the west with lighter, patchy flooding.",
+      "default_start": [
+        38.12442,
+        -0.82218
+      ],
+      "default_end": [
+        38.12661,
+        -0.79822
+      ]
+    },
+    {
+      "id": "spain_7387658",
+      "chip_id": "Spain_7387658",
+      "name": "Segura lowlands, SE Spain (C)",
+      "region": "Spain, approx. 38.15 N, 0.76 W",
+      "event": "September 2019 flood (S1 2019-09-17, S2 2019-09-18)",
+      "description": "Severely flooded tile (more than half of labelled pixels are water).",
+      "default_start": [
+        38.14231,
+        -0.74107
+      ],
+      "default_end": [
+        38.15936,
+        -0.76507
+      ]
+    },
+    {
+      "id": "srilanka_713926",
+      "chip_id": "Sri-Lanka_713926",
+      "name": "East coast, Sri Lanka",
+      "region": "Sri Lanka, approx. 7.75 N, 81.66 E",
+      "event": "May 2017 flood (S1 2017-05-30, S2 2017-05-28)",
+      "description": "Coastal lagoon area with settlements on narrow land strips.",
+      "default_start": [
+        7.76693,
+        81.64861
+      ],
+      "default_end": [
+        7.73074,
+        81.68094
+      ]
+    },
+    {
+      "id": "srilanka_649970",
+      "chip_id": "Sri-Lanka_649970",
+      "name": "Southern lowlands, Sri Lanka",
+      "region": "Sri Lanka, approx. 6.23 N, 80.88 E",
+      "event": "May 2017 flood (S1 2017-05-30, S2 2017-05-28)",
+      "description": "Sparser rural network; tests routing where few alternatives exist.",
+      "default_start": [
+        6.22967,
+        80.87862
+      ],
+      "default_end": [
+        6.22007,
+        80.86162
+      ]
+    },
+    {
+      "id": "india_747992",
+      "chip_id": "India_747992",
+      "name": "Brahmaputra valley, Assam, India",
+      "region": "India, approx. 26.06 N, 92.88 E",
+      "event": "August 2016 flood (S1/S2 2016-08-12)",
+      "description": "Large inundated floodplain with very few mapped drivable roads (34 ways): illustrates disconnected or no-safe-path cases.",
+      "default_start": [
+        26.04512,
+        92.87481
+      ],
+      "default_end": [
+        26.06982,
+        92.8966
+      ]
+    }
+  ]
+}

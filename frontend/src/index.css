@@ -1,0 +1,61 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@theme {
+  --font-sans: "Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "Cascadia Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+
+  --color-ink-950: #07111f;
+  --color-ink-900: #0b1b33;
+  --color-ink-800: #12284a;
+  --color-ink-700: #1c3a66;
+
+  --color-water-50: #eff6ff;
+  --color-water-100: #dbeafe;
+  --color-water-500: #3b82f6;
+  --color-water-600: #2563eb;
+  --color-water-700: #1d4ed8;
+
+  --color-risk-clear: #16a34a;
+  --color-risk-low: #84cc16;
+  --color-risk-partial: #f59e0b;
+  --color-risk-flooded: #dc2626;
+  --color-risk-unknown: #94a3b8;
+
+  --animate-fade-in: fade-in 0.35s ease-out both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes shimmer {
+  from { background-position: -400px 0; }
+  to { background-position: 400px 0; }
+}
+
+html, body, #root { height: 100%; }
+body {
+  @apply bg-slate-50 text-slate-800 antialiased;
+  font-feature-settings: "cv11", "ss01", "tnum";
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #eef2f7 0, #e2e8f0 40%, #eef2f7 80%);
+  background-size: 800px 100%;
+  @apply animate-shimmer rounded-md;
+}
+
+.leaflet-container { font-family: var(--font-sans); background: #e5e9f0; }
+.leaflet-control-attribution { font-size: 10px; }
+
+/* thin custom scrollbar for log panes */
+.scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
+
+:focus-visible { outline: 2px solid var(--color-water-500); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

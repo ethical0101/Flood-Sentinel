@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "floodroute-api",
+      "runtimeExecutable": "F:\\Disaster\\.venv\\Scripts\\python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "backend.app.main:app", "--host", "127.0.0.1", "--port", "8000"],
+      "cwd": "F:\\Disaster",
+      "port": 8000
+    },
+    {
+      "name": "floodroute-frontend-dev",
+      "runtimeExecutable": "npm.cmd",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "F:\\Disaster\\frontend",
+      "port": 5173
+    }
+  ]
+}

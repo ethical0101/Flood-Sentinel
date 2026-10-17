@@ -1,0 +1,417 @@
+{
+  "all_not_water": {
+    "description": "Constant predictor: every pixel = not water",
+    "splits": {
+      "valid": {
+        "iou_water": 0.0,
+        "iou_not_water": 0.8897445025739447,
+        "miou": 0.44487225128697233,
+        "dice_water": 0.0,
+        "f1_water": NaN,
+        "precision_water": NaN,
+        "recall_water": 0.0,
+        "pixel_accuracy": 0.8897445025739447,
+        "omission_error": 1.0,
+        "commission_error": NaN,
+        "valid_pixels": 20294725,
+        "water_fraction_gt": 0.1102554974260553,
+        "confusion_matrix": [
+          [
+            18057120,
+            0
+          ],
+          [
+            2237605,
+            0
+          ]
+        ],
+        "mean_chip_iou_water": 0.0,
+        "n_chips": 89
+      },
+      "test": {
+        "iou_water": 0.0,
+        "iou_not_water": 0.8749302968553421,
+        "miou": 0.43746514842767104,
+        "dice_water": 0.0,
+        "f1_water": NaN,
+        "precision_water": NaN,
+        "recall_water": 0.0,
+        "pixel_accuracy": 0.8749302968553421,
+        "omission_error": 1.0,
+        "commission_error": NaN,
+        "valid_pixels": 20517367,
+        "water_fraction_gt": 0.1250697031446579,
+        "confusion_matrix": [
+          [
+            17951266,
+            0
+          ],
+          [
+            2566101,
+            0
+          ]
+        ],
+        "mean_chip_iou_water": 0.0,
+        "n_chips": 90
+      },
+      "bolivia": {
+        "iou_water": 0.0,
+        "iou_not_water": 0.841390047823866,
+        "miou": 0.420695023911933,
+        "dice_water": 0.0,
+        "f1_water": NaN,
+        "precision_water": NaN,
+        "recall_water": 0.0,
+        "pixel_accuracy": 0.841390047823866,
+        "omission_error": 1.0,
+        "commission_error": NaN,
+        "valid_pixels": 2867815,
+        "water_fraction_gt": 0.1586099521761341,
+        "confusion_matrix": [
+          [
+            2412951,
+            0
+          ],
+          [
+            454864,
+            0
+          ]
+        ],
+        "mean_chip_iou_water": 0.0,
+        "n_chips": 15
+      }
+    }
+  },
+  "s1_otsu_threshold": {
+    "description": "Sentinel-1 Otsu threshold labels shipped with Sen1Floods11 (S1OtsuLabelHand)",
+    "splits": {
+      "valid": {
+        "iou_water": 0.5056197446647244,
+        "iou_not_water": 0.9162596761115152,
+        "miou": 0.7109397103881198,
+        "dice_water": 0.6716433501306364,
+        "f1_water": 0.6716433501306364,
+        "precision_water": 0.6328523650036149,
+        "recall_water": 0.7155002781992353,
+        "pixel_accuracy": 0.922865769307049,
+        "omission_error": 0.28449972180076466,
+        "commission_error": 0.36714763499638514,
+        "valid_pixels": 20294725,
+        "water_fraction_gt": 0.1102554974260553,
+        "confusion_matrix": [
+          [
+            17128300,
+            928820
+          ],
+          [
+            636598,
+            1601007
+          ]
+        ],
+        "mean_chip_iou_water": 0.31815332134966773,
+        "n_chips": 89
+      },
+      "test": {
+        "iou_water": 0.5458456321591642,
+        "iou_not_water": 0.9160019967865324,
+        "miou": 0.7309238144728483,
+        "dice_water": 0.7062097544587977,
+        "f1_water": 0.7062097544587977,
+        "precision_water": 0.6811499390506381,
+        "recall_water": 0.7331839237816439,
+        "pixel_accuracy": 0.9237045377216287,
+        "omission_error": 0.2668160762183562,
+        "commission_error": 0.3188500609493619,
+        "valid_pixels": 20517367,
+        "water_fraction_gt": 0.1250697031446579,
+        "confusion_matrix": [
+          [
+            17070561,
+            880705
+          ],
+          [
+            684677,
+            1881424
+          ]
+        ],
+        "mean_chip_iou_water": 0.3273998558394092,
+        "n_chips": 90
+      },
+      "bolivia": {
+        "iou_water": 0.6972009323151904,
+        "iou_not_water": 0.9307780750543951,
+        "miou": 0.8139895036847928,
+        "dice_water": 0.8215891460348455,
+        "f1_water": 0.8215891460348456,
+        "precision_water": 0.7809091251220638,
+        "recall_water": 0.8667403883358542,
+        "pixel_accuracy": 0.9402942658435081,
+        "omission_error": 0.13325961166414577,
+        "commission_error": 0.21909087487793621,
+        "valid_pixels": 2867815,
+        "water_fraction_gt": 0.1586099521761341,
+        "confusion_matrix": [
+          [
+            2302341,
+            110610
+          ],
+          [
+            60615,
+            394249
+          ]
+        ],
+        "mean_chip_iou_water": 0.45307844765756866,
+        "n_chips": 15
+      }
+    }
+  },
+  "s2_ndwi_gt0": {
+    "description": "Sentinel-2 NDWI (B3-B8)/(B3+B8) > 0 (McFeeters, 1996)",
+    "splits": {
+      "valid": {
+        "iou_water": 0.6720600430931697,
+        "iou_not_water": 0.9587731993733772,
+        "miou": 0.8154166212332734,
+        "dice_water": 0.8038707053245713,
+        "f1_water": 0.8038707053245713,
+        "precision_water": 0.9322117042885065,
+        "recall_water": 0.7065916459786244,
+        "pixel_accuracy": 0.961984998564898,
+        "omission_error": 0.29340835402137555,
+        "commission_error": 0.0677882957114935,
+        "valid_pixels": 20294725,
+        "water_fraction_gt": 0.1102554974260553,
+        "confusion_matrix": [
+          [
+            17942148,
+            114972
+          ],
+          [
+            656532,
+            1581073
+          ]
+        ],
+        "mean_chip_iou_water": 0.4034041238730772,
+        "n_chips": 89
+      },
+      "test": {
+        "iou_water": 0.757825077907766,
+        "iou_not_water": 0.9640108937839793,
+        "miou": 0.8609179858458726,
+        "dice_water": 0.862230363455458,
+        "f1_water": 0.862230363455458,
+        "precision_water": 0.9225619902997586,
+        "recall_water": 0.8093052455846438,
+        "pixel_accuracy": 0.9676536955253566,
+        "omission_error": 0.19069475441535622,
+        "commission_error": 0.0774380097002414,
+        "valid_pixels": 20517367,
+        "water_fraction_gt": 0.1250697031446579,
+        "confusion_matrix": [
+          [
+            17776947,
+            174319
+          ],
+          [
+            489342,
+            2076759
+          ]
+        ],
+        "mean_chip_iou_water": 0.4655624930779154,
+        "n_chips": 90
+      },
+      "bolivia": {
+        "iou_water": 0.8320121562022574,
+        "iou_not_water": 0.9668842910633288,
+        "miou": 0.8994482236327932,
+        "dice_water": 0.9083041871588998,
+        "f1_water": 0.9083041871588999,
+        "precision_water": 0.9291475819951069,
+        "recall_water": 0.888375426501108,
+        "pixel_accuracy": 0.9715504661214199,
+        "omission_error": 0.11162457349889197,
+        "commission_error": 0.07085241800489303,
+        "valid_pixels": 2867815,
+        "water_fraction_gt": 0.1586099521761341,
+        "confusion_matrix": [
+          [
+            2382137,
+            30814
+          ],
+          [
+            50774,
+            404090
+          ]
+        ],
+        "mean_chip_iou_water": 0.5601883715982707,
+        "n_chips": 15
+      }
+    }
+  },
+  "s2_mndwi_gt0": {
+    "description": "Sentinel-2 MNDWI (B3-B11)/(B3+B11) > 0 (Xu, 2006)",
+    "splits": {
+      "valid": {
+        "iou_water": 0.5985320481119079,
+        "iou_not_water": 0.9197425255213351,
+        "miou": 0.7591372868166215,
+        "dice_water": 0.7488521094323493,
+        "f1_water": 0.7488521094323491,
+        "precision_water": 0.6101150598394997,
+        "recall_water": 0.9692559678763678,
+        "pixel_accuracy": 0.9283193046468972,
+        "omission_error": 0.03074403212363219,
+        "commission_error": 0.38988494016050035,
+        "valid_pixels": 20294725,
+        "water_fraction_gt": 0.1102554974260553,
+        "confusion_matrix": [
+          [
+            16671173,
+            1385947
+          ],
+          [
+            68793,
+            2168812
+          ]
+        ],
+        "mean_chip_iou_water": 0.44750073039046456,
+        "n_chips": 89
+      },
+      "test": {
+        "iou_water": 0.6504230181007162,
+        "iou_not_water": 0.9278765870787138,
+        "miou": 0.789149802589715,
+        "dice_water": 0.7881894653277606,
+        "f1_water": 0.7881894653277606,
+        "precision_water": 0.6755038186759215,
+        "recall_water": 0.9459982284407356,
+        "pixel_accuracy": 0.9364099204347225,
+        "omission_error": 0.05400177155926442,
+        "commission_error": 0.3244961813240785,
+        "valid_pixels": 20517367,
+        "water_fraction_gt": 0.1250697031446579,
+        "confusion_matrix": [
+          [
+            16785139,
+            1166127
+          ],
+          [
+            138574,
+            2427527
+          ]
+        ],
+        "mean_chip_iou_water": 0.4723299531568144,
+        "n_chips": 90
+      },
+      "bolivia": {
+        "iou_water": 0.5513645534671339,
+        "iou_not_water": 0.8520044278167781,
+        "miou": 0.7016844906419559,
+        "dice_water": 0.7108123648112149,
+        "f1_water": 0.7108123648112149,
+        "precision_water": 0.5608424257673608,
+        "recall_water": 0.9702614407822998,
+        "pixel_accuracy": 0.8747799282729186,
+        "omission_error": 0.029738559217700234,
+        "commission_error": 0.43915757423263924,
+        "valid_pixels": 2867815,
+        "water_fraction_gt": 0.1586099521761341,
+        "confusion_matrix": [
+          [
+            2067370,
+            345581
+          ],
+          [
+            13527,
+            441337
+          ]
+        ],
+        "mean_chip_iou_water": 0.3877409155352087,
+        "n_chips": 15
+      }
+    }
+  },
+  "jrc_permanent_water": {
+    "description": "JRC Global Surface Water layer shipped with the dataset (pre-event water only)",
+    "splits": {
+      "valid": {
+        "iou_water": 0.27010319577138686,
+        "iou_not_water": 0.9161108167328552,
+        "miou": 0.5931070062521211,
+        "dice_water": 0.42532480300916314,
+        "f1_water": 0.4253248030091632,
+        "precision_water": 0.9611530911424581,
+        "recall_water": 0.27308439157045145,
+        "pixel_accuracy": 0.9186366408019818,
+        "omission_error": 0.7269156084295486,
+        "commission_error": 0.03884690885754193,
+        "valid_pixels": 20294725,
+        "water_fraction_gt": 0.1102554974260553,
+        "confusion_matrix": [
+          [
+            18032423,
+            24697
+          ],
+          [
+            1626550,
+            611055
+          ]
+        ],
+        "mean_chip_iou_water": 0.16964998003739068,
+        "n_chips": 89
+      },
+      "test": {
+        "iou_water": 0.3446188531531124,
+        "iou_not_water": 0.9128127891322491,
+        "miou": 0.6287158211426808,
+        "dice_water": 0.512589649245191,
+        "f1_water": 0.5125896492451909,
+        "precision_water": 0.9536299835335706,
+        "recall_water": 0.3504920500011496,
+        "pixel_accuracy": 0.9166347221843817,
+        "omission_error": 0.6495079499988504,
+        "commission_error": 0.046370016466429374,
+        "valid_pixels": 20517367,
+        "water_fraction_gt": 0.1250697031446579,
+        "confusion_matrix": [
+          [
+            17907533,
+            43733
+          ],
+          [
+            1666703,
+            899398
+          ]
+        ],
+        "mean_chip_iou_water": 0.17424675137841955,
+        "n_chips": 90
+      },
+      "bolivia": {
+        "iou_water": 0.0645845058426002,
+        "iou_not_water": 0.8471392568495179,
+        "miou": 0.45586188134605904,
+        "dice_water": 0.12133279319424752,
+        "f1_water": 0.12133279319424753,
+        "precision_water": 0.7712174271294675,
+        "recall_water": 0.06584605508459672,
+        "pixel_accuracy": 0.8487357099394487,
+        "omission_error": 0.9341539449154033,
+        "commission_error": 0.2287825728705325,
+        "valid_pixels": 2867815,
+        "water_fraction_gt": 0.1586099521761341,
+        "confusion_matrix": [
+          [
+            2404066,
+            8885
+          ],
+          [
+            424913,
+            29951
+          ]
+        ],
+        "mean_chip_iou_water": 0.12506298287849535,
+        "n_chips": 15
+      }
+    }
+  }
+}

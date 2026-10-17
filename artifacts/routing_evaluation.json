@@ -1,0 +1,192 @@
+{
+  "protocol": {
+    "pairs_per_area": 50,
+    "seed": 123,
+    "min_straight_line_m": 1000,
+    "flood_threshold": 0.5,
+    "buffer_px": 1,
+    "settings": {
+      "flood_penalty": 10.0,
+      "unknown_penalty": 0.5,
+      "prob_penalty": 1.0,
+      "close_flooded": false,
+      "closure_min_flooded_m": 20.0,
+      "alternatives": 0
+    },
+    "note": "Routes planned on the model prediction; flooded length measured on the Sen1Floods11 hand label (same 5 m sampling, same buffer). Oracle = routes planned directly on the hand label."
+  },
+  "areas": {
+    "spain_7370579": {
+      "edges": 1659,
+      "flooded_road_km_model": 58.929,
+      "flooded_road_km_label": 58.367,
+      "edge_agreement": {
+        "tp": 282,
+        "fp": 28,
+        "fn": 33,
+        "tn": 1316,
+        "accuracy": 0.9632308619650392,
+        "precision": 0.9096774193548387,
+        "recall": 0.8952380952380953
+      },
+      "n_pairs": 50,
+      "n_pairs_shortest_route_crosses_labelled_flood": 49,
+      "mean_gt_flooded_m": {
+        "shortest": 646.9062385404636,
+        "risk_aware_model": 341.0360118239625,
+        "risk_aware_oracle": 341.08479658736644
+      },
+      "mean_length_m": {
+        "shortest": 3514.538,
+        "risk_aware_model": 4171.028,
+        "risk_aware_oracle": 4081.724
+      }
+    },
+    "spain_6095801": {
+      "edges": 2039,
+      "flooded_road_km_model": 9.109,
+      "flooded_road_km_label": 8.719,
+      "edge_agreement": {
+        "tp": 47,
+        "fp": 10,
+        "fn": 14,
+        "tn": 1968,
+        "accuracy": 0.9882295242766062,
+        "precision": 0.8245614035087719,
+        "recall": 0.7704918032786885
+      },
+      "n_pairs": 50,
+      "n_pairs_shortest_route_crosses_labelled_flood": 4,
+      "mean_gt_flooded_m": {
+        "shortest": 20.947624489688668,
+        "risk_aware_model": 9.494685618265901,
+        "risk_aware_oracle": 9.683126693091594
+      },
+      "mean_length_m": {
+        "shortest": 2550.906,
+        "risk_aware_model": 2574.814,
+        "risk_aware_oracle": 2568.6079999999997
+      }
+    },
+    "spain_7387658": {
+      "edges": 1637,
+      "flooded_road_km_model": 86.896,
+      "flooded_road_km_label": 102.602,
+      "edge_agreement": {
+        "tp": 652,
+        "fp": 29,
+        "fn": 113,
+        "tn": 843,
+        "accuracy": 0.9132559560171044,
+        "precision": 0.9574155653450808,
+        "recall": 0.8522875816993464
+      },
+      "n_pairs": 50,
+      "n_pairs_shortest_route_crosses_labelled_flood": 50,
+      "mean_gt_flooded_m": {
+        "shortest": 1435.4404465249274,
+        "risk_aware_model": 1295.7487351640384,
+        "risk_aware_oracle": 1288.8314978444878
+      },
+      "mean_length_m": {
+        "shortest": 3338.34,
+        "risk_aware_model": 3585.902,
+        "risk_aware_oracle": 3523.462
+      }
+    },
+    "srilanka_713926": {
+      "edges": 2410,
+      "flooded_road_km_model": 2.466,
+      "flooded_road_km_label": 2.387,
+      "edge_agreement": {
+        "tp": 10,
+        "fp": 2,
+        "fn": 2,
+        "tn": 2396,
+        "accuracy": 0.9983402489626556,
+        "precision": 0.8333333333333334,
+        "recall": 0.8333333333333334
+      },
+      "n_pairs": 50,
+      "n_pairs_shortest_route_crosses_labelled_flood": 3,
+      "mean_gt_flooded_m": {
+        "shortest": 44.31153391394972,
+        "risk_aware_model": 0.9940809965305081,
+        "risk_aware_oracle": 0.9940809965305081
+      },
+      "mean_length_m": {
+        "shortest": 3005.672,
+        "risk_aware_model": 3041.515999999999,
+        "risk_aware_oracle": 3041.515999999999
+      }
+    },
+    "srilanka_649970": {
+      "edges": 412,
+      "flooded_road_km_model": 1.63,
+      "flooded_road_km_label": 3.002,
+      "edge_agreement": {
+        "tp": 28,
+        "fp": 2,
+        "fn": 24,
+        "tn": 358,
+        "accuracy": 0.9368932038834952,
+        "precision": 0.9333333333333333,
+        "recall": 0.5384615384615384
+      },
+      "n_pairs": 50,
+      "n_pairs_shortest_route_crosses_labelled_flood": 35,
+      "mean_gt_flooded_m": {
+        "shortest": 108.8773186673191,
+        "risk_aware_model": 99.49454375125099,
+        "risk_aware_oracle": 47.668503477280574
+      },
+      "mean_length_m": {
+        "shortest": 4823.023999999999,
+        "risk_aware_model": 4869.657999999999,
+        "risk_aware_oracle": 5116.482
+      }
+    },
+    "india_747992": {
+      "edges": 66,
+      "flooded_road_km_model": 5.595,
+      "flooded_road_km_label": 7.216,
+      "edge_agreement": {
+        "tp": 20,
+        "fp": 0,
+        "fn": 10,
+        "tn": 36,
+        "accuracy": 0.8484848484848485,
+        "precision": 1.0,
+        "recall": 0.6666666666666666
+      },
+      "n_pairs": 50,
+      "n_pairs_shortest_route_crosses_labelled_flood": 50,
+      "mean_gt_flooded_m": {
+        "shortest": 636.6546519134465,
+        "risk_aware_model": 586.1483314396916,
+        "risk_aware_oracle": 586.1483314396916
+      },
+      "mean_length_m": {
+        "shortest": 3802.61,
+        "risk_aware_model": 3844.252,
+        "risk_aware_oracle": 3844.252
+      }
+    }
+  },
+  "overall": {
+    "n_pairs": 300,
+    "mean_gt_flooded_m": {
+      "shortest": 482.18963567496587,
+      "risk_aware_model": 388.81939813229,
+      "risk_aware_oracle": 379.06838950640815
+    },
+    "mean_length_m": {
+      "shortest": 3505.8483333333334,
+      "risk_aware_model": 3681.195,
+      "risk_aware_oracle": 3696.007333333333
+    },
+    "reduction_in_gt_flooded_length_vs_shortest": 0.19363800180395163,
+    "mean_detour_pct": 4.548461120775038,
+    "pairs_where_model_route_has_more_gt_flood_than_shortest": 3
+  }
+}

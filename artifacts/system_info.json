@@ -1,0 +1,60 @@
+{
+  "generated": "2026-10-18T00:36:11",
+  "os": "Windows 11 (10.0.26300)",
+  "cpu": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+  "logical_cpus": 16,
+  "ram_total_gib": 15.7,
+  "ram_available_gib": 2.8,
+  "python": "3.13.4",
+  "python_exe": "F:\\Disaster\\.venv\\Scripts\\python.exe",
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 3050 Laptop GPU",
+    "mem_total_mib": "4096",
+    "mem_used_mib": "893",
+    "mem_free_mib": "3070",
+    "driver": "610.74",
+    "util_pct": "96",
+    "temp_c": "75"
+  },
+  "torch": {
+    "installed": true,
+    "version": "2.14.1+cu130",
+    "cuda_build": "13.0",
+    "cuda_available": true,
+    "cudnn": 92400,
+    "device": "NVIDIA GeForce RTX 3050 Laptop GPU",
+    "vram_gib": 4.0,
+    "capability": "8.6",
+    "bf16": true
+  },
+  "disks": [
+    {
+      "drive": "C",
+      "total_gb": 637.7,
+      "free_gb": 59.3
+    },
+    {
+      "drive": "D",
+      "total_gb": 53.2,
+      "free_gb": 47.5
+    },
+    {
+      "drive": "E",
+      "total_gb": 107.9,
+      "free_gb": 18.1
+    },
+    {
+      "drive": "F",
+      "total_gb": 193.5,
+      "free_gb": 162.7
+    }
+  ],
+  "project_drive": "F:",
+  "data_dir": "F:\\Disaster\\data\\raw",
+  "tools": {
+    "git": "git version 2.49.0.windows.1",
+    "node": "v20.20.2",
+    "npm": "10.8.2",
+    "nvcc": "Build cuda_13.1.r13.1/compiler.37061995_0"
+  }
+}

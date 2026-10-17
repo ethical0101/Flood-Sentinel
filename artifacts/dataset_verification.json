@@ -1,0 +1,23 @@
+{
+  "root": "F:\\Disaster\\data\\raw\\sen1floods11",
+  "files_checked": 2235,
+  "files_ok": 2235,
+  "integrity_mode": "md5",
+  "split_sizes": {
+    "train": 252,
+    "valid": 89,
+    "test": 90,
+    "bolivia": 15
+  },
+  "unique_chips": 446,
+  "crs": {
+    "EPSG:4326": 2230
+  },
+  "label_pixel_counts": {
+    "-1": 15932910,
+    "0": 90277709,
+    "1": 10705605
+  },
+  "errors": [],
+  "passed": true
+}
