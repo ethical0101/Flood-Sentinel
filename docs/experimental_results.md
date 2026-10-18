@@ -72,6 +72,37 @@ Clear-sky valid pixels (secondary: all valid pixels). Only models that need Sent
 5. **Radiometric augmentation alone** (R1) changed neither test nor Bolivia beyond noise, so brightness invariance is not what limits Bolivia performance.
 6. Net: v2 delivers a more honest and better-characterised model rather than a better one. The documented effect is validation-selected thresholds. The index-channel idea is a lead that needs multi-seed confirmation and more independent events.
 
+## A7. Multi-dataset training (Sen1Floods11 + WorldFloods v2 training subset)
+**Data:**
+* The WorldFloods v2 training subset (`configs/worldfloods_train_subset.json`, `scripts/select_worldfloods_subset.py`): one scene per flood event, smallest first, a 5 GB budget, and every scene within 10 km of a Sen1Floods11 valid, test or Bolivia chip excluded (4 scenes).
+* That gives 97 scenes (4.85 GB, SHA-256 verified). They were tiled into **303 tiles of up to 512² from 75 events**, with 68 M labelled pixels and 18.5% water (`training/prepare_worldfloods.py`). Cloud and no-data pixels are ignored.
+* Two scenes were too small (< 256 px); the other 20 left over produced no tile with at least 50% labelled pixels after cloud masking.
+
+**Training:** Sen1Floods11 chips give 4 random crops each per epoch and WorldFloods tiles 1 each (1,311 samples per epoch). The models are optical only, because WorldFloods has no Sentinel-1. Everything else (stats, optimiser, early stopping, selection on Sen1Floods11 validation) is unchanged. Each run is paired with the single-dataset run of the identical recipe.
+
+| Run | Pair | Best epoch / run | Val IoU | Test IoU | Bolivia IoU | WorldFloods IoU (clear) |
+|---|---|---|---|---|---|---|
+| `unet_resnet34_s2` (v1) | – | 54 / 60 | 0.8411 | 0.8159 | 0.7740 | **0.7809** |
+| `md1_unet_s2_worldfloods` | vs v1 S2 | 26 / 41 | 0.8382 | 0.8064 | **0.8111** | 0.7608 |
+| `v2_r4_unet_s2i_radiometric` | – | 53 / 60 | 0.8360 | 0.8248 | 0.8181 | 0.7668 |
+| `md2_unet_s2i_radiometric_worldfloods` | vs R4 | 11 / 26 | 0.8010 | 0.7896 | 0.7493 | 0.7419 |
+
+All values are at the validation-selected threshold.
+
+Paired chip bootstrap (multi-dataset minus single-dataset):
+
+| Run | Test ΔIoU [95% CI] | Bolivia ΔIoU [95% CI] |
+|---|---|---|
+| md1 vs v1 S2 | **−0.0095 [−0.015, −0.006]** | **+0.0371 [+0.008, +0.074]** |
+| md2 vs R4 | **−0.0353 [−0.059, −0.020]** | **−0.0688 [−0.123, −0.046]** |
+
+**Why it did not help (measured):**
+1. **Cross-sensor, cross-date labels.** Only 2 of the 75 scenes used have masks derived from the Sentinel-2 image itself. The rest come from Copernicus EMS / UNOSAT products made from Sentinel-1, COSMO-SkyMed, RADARSAT-2, TerraSAR-X, Pléiades, SPOT, Landsat-8 and others, often on a different date. The NDWI-vs-label IoU on the training tiles is **0.58 for WorldFloods against 0.65 for Sen1Floods11**, and about 0.4 for RADARSAT-2- and Landsat-8-derived labels. The network is being supervised with water it often cannot see in the S2 image.
+2. **Early stopping on the Sen1Floods11 validation split** ended training sooner (best epoch 26 and 11, against 54 and 53), so the models also saw fewer updates on the target distribution.
+3. md2, which combined the noisier data with radiometric augmentation and index channels, was the least stable.
+
+**Conclusion:** with this data budget and label quality, adding WorldFloods training data is **not an improvement**. md1 gains on Bolivia (+0.037, significant) but loses on the test split and on WorldFloods itself, and md2 is worse everywhere. Neither run would be selected under the pre-registered rule, so **the default model is unchanged**. A clean-label subset (S2-derived or same-day very-high-resolution optical masks only) or a larger budget would be the next experiment.
+
 ---
 
 # Part B: v1 results (unchanged; for reference)

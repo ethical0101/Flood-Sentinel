@@ -24,6 +24,8 @@ from training.utils import artifacts_dir, runs_dir, write_json  # noqa: E402
 BASE = "unet_resnet34_s1s2"
 OTHERS = ["v2_r0b_unet_s1s2_seed7", "v2_r1_unet_s1s2_radiometric", "v2_r2_unet_s1s2i_indices", "v2_r3_unet_s1s2i_radiometric",
           "v2_r4_unet_s2i_radiometric"]
+# multi-dataset runs vs the single-dataset run with the identical recipe (only the training data differs)
+MD_PAIRS = {"md1_unet_s2_worldfloods": "unet_resnet34_s2", "md2_unet_s2i_radiometric_worldfloods": "v2_r4_unet_s2i_radiometric"}
 
 
 def per_chip_counts(run: str, ids: list[str]) -> np.ndarray:
@@ -63,6 +65,20 @@ def main() -> None:
                       "p_delta_le_0": round(float((boot <= 0).mean()), 4)}
             print(split, r, res[r], flush=True)
         out["splits"][split] = {"n_chips": len(ids), "comparisons": res}
+        md = {}
+        for r, ref in MD_PAIRS.items():
+            if not (runs_dir() / r / "evaluation.json").exists():
+                continue
+            if ref not in counts:
+                counts[ref] = per_chip_counts(ref, ids)
+            counts[r] = per_chip_counts(r, ids)
+            obs = iou(counts[r]) - iou(counts[ref])
+            boot = np.array([iou(counts[r][d]) - iou(counts[ref][d]) for d in draws])
+            md[r] = {"reference": ref, "delta_iou": round(float(obs), 4),
+                     "ci95": [round(float(np.percentile(boot, 2.5)), 4), round(float(np.percentile(boot, 97.5)), 4)],
+                     "p_delta_le_0": round(float((boot <= 0).mean()), 4)}
+            print(split, r, "vs", ref, md[r], flush=True)
+        out["splits"][split]["multi_dataset"] = md
     write_json(artifacts_dir() / "v2_bootstrap.json", out)
 
 

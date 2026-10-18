@@ -42,3 +42,18 @@
 | Normalisation statistics | train split only |
 
 Synthetic or fabricated data is not used anywhere.
+
+---
+
+# Data card: WorldFloods v2 (as used in this project)
+| Field | Value |
+|---|---|
+| Creator / citation | Portalés-Julià, E., Mateo-García, G., Purcell, C., Gómez-Chova, L. (2023). *Global flood extent segmentation in optical satellite images.* Scientific Reports 13, 20316. doi:10.1038/s41598-023-47595-7 |
+| URL | https://huggingface.co/datasets/isp-uv-es/WorldFloodsv2 |
+| Licence | **CC BY-NC 4.0** (non-commercial, attribution) |
+| Parts used | Test split, 18 scenes (evaluation only); training subset of 97 scenes / 75 contributing events (multi-dataset experiments) |
+| Imagery | Sentinel-2 L1C, 13 bands, ×10⁴ reflectance, 10 m, UTM. Bands 14–15 (QA60, cloud probability) unused. No Sentinel-1. |
+| Labels | Flood masks from Copernicus EMS (most), UNOSAT and GLOFIMR products, often derived from other satellites (SAR or very-high-resolution optical) and other dates. Water includes permanent water. Cloud band marks clouds. |
+| Integrity | SHA-256 of every downloaded file matched the published LFS hash |
+| Leakage control | Training scenes within 10 km of any Sen1Floods11 held-out chip excluded. The WorldFloods test split was never used for training or selection. |
+| Redistribution | Raw data is not committed to git. Only small derived figures and metrics appear in the repository. |

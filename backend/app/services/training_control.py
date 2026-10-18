@@ -31,7 +31,7 @@ def presets() -> dict[str, list[str]]:
     spec = importlib.util.spec_from_file_location("run_experiments", REPO / "scripts" / "run_experiments.py")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    return {**mod.EXPERIMENTS, **mod.EXPERIMENTS_V2}
+    return {**mod.EXPERIMENTS, **mod.EXPERIMENTS_V2, **mod.EXPERIMENTS_MD}
 
 
 def active_runs() -> list[dict]:

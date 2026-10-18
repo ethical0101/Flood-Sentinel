@@ -7,6 +7,8 @@ data:
   modality: s1s2          # s1 | s2 | s1s2 | rgb | s2i | s1s2i  (i = + NDWI/MNDWI index channels)
   crop_size: 256          # random training crops; validation/test use full 512x512 chips
   crops_per_chip: 4       # random crops drawn from every training chip per epoch
+  train_split: train      # "train" = Sen1Floods11 only; "train+wf_train" adds the WorldFloods v2 subset (S2 models only)
+  extra_crops_per_chip: 1 # crops per epoch from each extra-source (WorldFloods) tile
   num_workers: 2          # keep low: 16 GB RAM laptop, Windows spawn-based workers
   augment: true           # flips + 90-degree rotations (+ colour jitter for rgb)
   radiometric:            # v2: physically motivated photometric augmentation on raw values (off = v1 recipe)

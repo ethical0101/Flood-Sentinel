@@ -38,3 +38,7 @@ This is a research prototype. A "risk-aware" route is not a safe route. Do not u
 * Train on the Sen1Floods11 weakly-labelled set, add multi-seed runs and confidence intervals, and calibrate probabilities.
 * Add a DEM (for example Copernicus GLO-30) for depth proxies, plus a permanent-water mask to separate flood water from normal water.
 * Accept live Sentinel-1 scenes, for example by user-supplied download from the Copernicus Data Space.
+
+## Multi-dataset training (v2)
+* WorldFloods masks are mostly cross-sensor or cross-date, so training an S2 model on them adds label noise. Adding a 75-event subset made the models worse on the test split and on WorldFloods; only Bolivia improved (md1, +0.037). Only a 5 GB, one-scene-per-event subset was used. A clean-label or larger subset could behave differently, but that was not tested.
+* Multi-dataset models are optical only (no Sentinel-1 in WorldFloods). Early stopping and selection still use the Sen1Floods11 validation split only.

@@ -45,6 +45,26 @@
           ],
           "p_delta_le_0": 0.5345
         }
+      },
+      "multi_dataset": {
+        "md1_unet_s2_worldfloods": {
+          "reference": "unet_resnet34_s2",
+          "delta_iou": -0.0095,
+          "ci95": [
+            -0.0147,
+            -0.0056
+          ],
+          "p_delta_le_0": 1.0
+        },
+        "md2_unet_s2i_radiometric_worldfloods": {
+          "reference": "v2_r4_unet_s2i_radiometric",
+          "delta_iou": -0.0353,
+          "ci95": [
+            -0.0591,
+            -0.0198
+          ],
+          "p_delta_le_0": 1.0
+        }
       }
     },
     "bolivia": {
@@ -89,6 +109,26 @@
             0.0434
           ],
           "p_delta_le_0": 0.0
+        }
+      },
+      "multi_dataset": {
+        "md1_unet_s2_worldfloods": {
+          "reference": "unet_resnet34_s2",
+          "delta_iou": 0.0371,
+          "ci95": [
+            0.0079,
+            0.0738
+          ],
+          "p_delta_le_0": 0.0065
+        },
+        "md2_unet_s2i_radiometric_worldfloods": {
+          "reference": "v2_r4_unet_s2i_radiometric",
+          "delta_iou": -0.0688,
+          "ci95": [
+            -0.1232,
+            -0.0464
+          ],
+          "p_delta_le_0": 1.0
         }
       }
     }

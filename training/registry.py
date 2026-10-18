@@ -41,6 +41,8 @@ def describe_changes(cfg: dict) -> str:
         ch.append(f"model={cfg['model']['arch']}/{cfg['model']['encoder']}")
     if (cfg["data"].get("radiometric") or {}).get("enabled"):
         ch.append("radiometric augmentation")
+    if "wf_train" in cfg["data"].get("train_split", "train"):
+        ch.append("+ WorldFloods training data")
     if cfg.get("seed", 42) != 42:
         ch.append(f"seed={cfg['seed']}")
     return ", ".join(ch) or "v1 default recipe"
@@ -71,7 +73,8 @@ def build() -> list[dict]:
             "generation": "v1" if d.name in V1_RUNS else "v2",
             "change_vs_v1": describe_changes(cfg),
             "state": st.get("state"),
-            "dataset": "Sen1Floods11 v1.1 HandLabeled",
+            "dataset": "Sen1Floods11 v1.1 HandLabeled" + (" + WorldFloods v2 subset (97 scenes)"
+                                                          if "wf_train" in cfg["data"].get("train_split", "train") else ""),
             "split": "official train/valid/test + Bolivia held out",
             "architecture": f"{cfg['model']['arch']} / {cfg['model']['encoder']}",
             "pretrained": cfg["model"].get("encoder_weights"),

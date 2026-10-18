@@ -41,6 +41,15 @@ EXPERIMENTS_V2 = {
 }
 
 
+# Multi-dataset: Sen1Floods11 train + WorldFloods v2 subset (S2 only). Each pairs with an existing S2 run so that
+# only the training data changes: md1 vs unet_resnet34_s2 (v1), md2 vs v2_r4_unet_s2i_radiometric.
+WF = ["data.train_split=train+wf_train", "data.extra_crops_per_chip=1"]
+EXPERIMENTS_MD = {
+    "md1_unet_s2_worldfloods": ["data.modality=s2", *WF],
+    "md2_unet_s2i_radiometric_worldfloods": ["data.modality=s2i", "data.radiometric.enabled=true", *WF],
+}
+
+
 def wait_for_idle_gpu(quiet_s: int) -> None:
     import time
 
@@ -72,14 +81,14 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", nargs="+")
     ap.add_argument("--skip-eval", action="store_true")
-    ap.add_argument("--suite", choices=["v1", "v2"], default="v1")
+    ap.add_argument("--suite", choices=["v1", "v2", "md"], default="v1")
     ap.add_argument("--polite", action="store_true",
                     help="only use the GPU when no other project's GPU job has run for --quiet-s seconds; "
                          "runs pause at epoch boundaries when one appears and resume afterwards")
     ap.add_argument("--quiet-s", type=int, default=300)
     a = ap.parse_args()
     py = sys.executable
-    suite = EXPERIMENTS if a.suite == "v1" else EXPERIMENTS_V2
+    suite = {"v1": EXPERIMENTS, "v2": EXPERIMENTS_V2, "md": EXPERIMENTS_MD}[a.suite]
     for run, overrides in suite.items():
         if a.only and run not in a.only:
             continue

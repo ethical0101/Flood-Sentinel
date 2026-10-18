@@ -161,8 +161,9 @@ def train(cfg: dict, run_dir: Path, ck_dir: Path, args, log: Logger) -> int:
     amp = bool(cfg["train"]["amp"]) and device.type == "cuda"
     d, t = cfg["data"], cfg["train"]
 
-    train_ds = FloodDataset("train", d["modality"], d["crop_size"], d["crops_per_chip"], d["augment"],
-                            seed=cfg["seed"], radiometric=d.get("radiometric"))
+    train_ds = FloodDataset(d.get("train_split", "train"), d["modality"], d["crop_size"], d["crops_per_chip"],
+                            d["augment"], seed=cfg["seed"], radiometric=d.get("radiometric"),
+                            extra_crops_per_chip=d.get("extra_crops_per_chip"))
     val_ds = FloodDataset("valid", d["modality"])
     if args.smoke:
         train_ds = Subset(train_ds, range(min(16, len(train_ds))))
@@ -211,7 +212,9 @@ def train(cfg: dict, run_dir: Path, ck_dir: Path, args, log: Logger) -> int:
     meta_base = {
         "pretrained": f"{m['encoder']} encoder initialised from {m['encoder_weights']} weights"
                       if m["encoder_weights"] else "trained from scratch",
-        "trained_on": "Sen1Floods11 v1.1 HandLabeled, official train split",
+        "trained_on": "Sen1Floods11 v1.1 HandLabeled, official train split"
+                      + (" + WorldFloods v2 training subset (configs/worldfloods_train_subset.json)"
+                         if "wf_train" in d.get("train_split", "train") else ""),
         "selected_on": "official valid split",
         "n_params": count_params(model),
         "modality": d["modality"],

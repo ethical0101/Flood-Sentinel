@@ -70,3 +70,18 @@ Label pixels across all chips: water 10.71 M, not-water 90.28 M, no-data 15.93 M
 ## Road network data
 
 OpenStreetMap drive networks were fetched through OSMnx/Overpass, one bounding-box request per study area, and cached as GraphML in `data/osm_cache/`. Choosing the study areas took one `out count` query per candidate held-out chip (19 queries). OSM data: © OpenStreetMap contributors, ODbL 1.0.
+
+## v2 additions: WorldFloods v2 (Portalés-Julià et al., 2023)
+* **Source:** https://huggingface.co/datasets/isp-uv-es/WorldFloodsv2. Public, not gated, **CC BY-NC 4.0**. 509 Sentinel-2 L1C scenes with Copernicus EMS / UNOSAT / GLOFIMR flood masks (train 475, val 16, test 18), about 76 GB in total.
+* **Downloaded:** only what was needed, each file SHA-256-verified against the Hugging Face LFS hash and resumable.
+  * **Test split** (18 scenes, 3.08 GB, 74 files): external evaluation only (`scripts/download_worldfloods_test.py`).
+  * **Training subset** (97 scenes, 4.85 GB, 291 files; `scripts/select_worldfloods_subset.py` → `configs/worldfloods_train_subset.json`, `scripts/download_worldfloods_subset.py`). The rule:
+    * official train split only;
+    * exclude scenes within 10 km of any Sen1Floods11 valid, test or Bolivia chip (4 excluded: 3 from EMSR388, the 2019 Spain event the test chips come from, and 1 from the Nigeria event);
+    * one scene per flood event, smallest first;
+    * a 5 GB budget, kept small on request.
+  * The full 92.7 GB train split was deliberately not downloaded.
+* **Label mapping** (from each scene's `encoding_values`): water 2→1, land 1→0, invalid 0→−1. Cloud (cloud band = 2) → −1, and S2 no-data → −1.
+* **Processed:** 303 tiles (≤ 512², ≤ 8 per scene, water-bearing first) from 75 events, 832 MB compressed (`training/prepare_worldfloods.py` → `data/processed/wf_chips/`, `index_worldfloods.json`).
+* **Caveat (measured):** most masks were mapped from other sensors and/or other dates than the paired S2 image. Only 2 of the 75 scenes used have S2-derived masks, and NDWI-vs-label agreement is 0.58 against 0.65 for Sen1Floods11. See `experimental_results.md` §A7.
+* **Not used:** FloodNet (UAV RGB, no georeferencing, Drive download) and the Sen1Floods11 weakly-labelled set (algorithmic Otsu/index labels, 33 GB).

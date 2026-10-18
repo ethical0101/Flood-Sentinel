@@ -1,0 +1,1311 @@
+{
+ "rule": "official train split; exclude scenes within 10.0 km of any Sen1Floods11 valid/test/Bolivia chip; at most 1 scene(s) per event, smallest first; budget 5.0 GB",
+ "n_train_scenes": 475,
+ "n_excluded_near_heldout": 4,
+ "excluded": [
+  {
+   "event_id": "EMSR314_01PATEGI_DEL_v1",
+   "near_chips": [
+    "Nigeria_31096",
+    "Nigeria_984831",
+    "Nigeria_1095404"
+   ]
+  },
+  {
+   "event_id": "EMSR388_AOI02_DEL_MONIT02",
+   "near_chips": [
+    "Spain_1199913",
+    "Spain_8372658",
+    "Spain_7604243",
+    "Spain_6537196",
+    "Spain_4282030"
+   ]
+  },
+  {
+   "event_id": "EMSR388_AOI06_GRA_PRODUCT",
+   "near_chips": [
+    "Spain_6537196",
+    "Spain_8565131",
+    "Spain_7558720",
+    "Spain_6095801"
+   ]
+  },
+  {
+   "event_id": "EMSR388_AOI07_GRA_PRODUCT",
+   "near_chips": [
+    "Spain_1199913",
+    "Spain_8372658",
+    "Spain_7604243",
+    "Spain_4282030",
+    "Spain_8565131"
+   ]
+  }
+ ],
+ "n_events_available": 116,
+ "n_chosen": 97,
+ "n_events_chosen": 97,
+ "bytes": 4846186831,
+ "scenes": [
+  {
+   "event_id": "EMSR312_02CALAYAN_GRA_v1",
+   "event": "EMSR312",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-09-20T02:21:16.550000+00:00",
+   "bytes": 720359,
+   "bounds_wgs84": [
+    121.463,
+    19.2539,
+    121.4885,
+    19.2738
+   ]
+  },
+  {
+   "event_id": "EMSR478_AOI01_GRA_PRODUCT",
+   "event": "EMSR478",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-11-15T02:23:44.158000+00:00",
+   "bytes": 996821,
+   "bounds_wgs84": [
+    124.2717,
+    13.5896,
+    124.3017,
+    13.6126
+   ]
+  },
+  {
+   "event_id": "EMSR395_AOI02_GRA_PRODUCT",
+   "event": "EMSR395",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-10-09T13:01:10.486000+00:00",
+   "bytes": 1481827,
+   "bounds_wgs84": [
+    -31.1919,
+    39.3656,
+    -31.1412,
+    39.3989
+   ]
+  },
+  {
+   "event_id": "EMSR431_AOI07_GRA_PRODUCT",
+   "event": "EMSR431",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-03-01T07:40:27.583000+00:00",
+   "bytes": 1495917,
+   "bounds_wgs84": [
+    47.9433,
+    33.3624,
+    47.9814,
+    33.3938
+   ]
+  },
+  {
+   "event_id": "EMSR485_AOI03_GRA_PRODUCT",
+   "event": "EMSR485",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-11-28T16:48:49.394500+00:00",
+   "bytes": 1501467,
+   "bounds_wgs84": [
+    -93.0242,
+    17.2721,
+    -92.9898,
+    17.3011
+   ]
+  },
+  {
+   "event_id": "EMSR470_AOI04_GRA_PRODUCT",
+   "event": "EMSR470",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-10-18T10:38:14.704000+00:00",
+   "bytes": 1762323,
+   "bounds_wgs84": [
+    0.47,
+    10.3311,
+    0.4993,
+    10.3718
+   ]
+  },
+  {
+   "event_id": "EMSR507_AOI07_GRA_PRODUCT",
+   "event": "EMSR507",
+   "source": "CopernicusEMS",
+   "s2_date": "2021-04-10T01:59:53.022000+00:00",
+   "bytes": 1766394,
+   "bounds_wgs84": [
+    125.5549,
+    -8.7559,
+    125.5807,
+    -8.7098
+   ]
+  },
+  {
+   "event_id": "EMSR385_AOI08_GRA_PRODUCT",
+   "event": "EMSR385",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-09-05T15:55:55.897000+00:00",
+   "bytes": 1987594,
+   "bounds_wgs84": [
+    -77.3468,
+    26.7527,
+    -77.3133,
+    26.8026
+   ]
+  },
+  {
+   "event_id": "EMSR468_AOI06_GRA_PRODUCT",
+   "event": "EMSR468",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-10-13T10:28:36.171000+00:00",
+   "bytes": 2007836,
+   "bounds_wgs84": [
+    7.8806,
+    44.4735,
+    7.9261,
+    44.5136
+   ]
+  },
+  {
+   "event_id": "EMSR357_AOI06_GRA_PRODUCT",
+   "event": "EMSR357",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-05-08T05:03:25+00:00",
+   "bytes": 2290757,
+   "bounds_wgs84": [
+    84.9425,
+    19.2867,
+    84.9849,
+    19.3273
+   ]
+  },
+  {
+   "event_id": "EMSR410_AOI02_GRA_PRODUCT",
+   "event": "EMSR410",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-12-02T07:46:29.593000+00:00",
+   "bytes": 2348086,
+   "bounds_wgs84": [
+    42.8525,
+    11.778,
+    42.9068,
+    11.8068
+   ]
+  },
+  {
+   "event_id": "EMSR429_AOI09_DEL_MONIT01",
+   "event": "EMSR429",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-03-04T11:56:25.877000+00:00",
+   "bytes": 2619157,
+   "bounds_wgs84": [
+    -8.5838,
+    53.5736,
+    -8.5137,
+    53.6162
+   ]
+  },
+  {
+   "event_id": "EMSR465_AOI08_GRA_PRODUCT",
+   "event": "EMSR465",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-09-25T09:29:42.342000+00:00",
+   "bytes": 2662287,
+   "bounds_wgs84": [
+    21.653,
+    39.4014,
+    21.7016,
+    39.4489
+   ]
+  },
+  {
+   "event_id": "EMSR441_AOI08_DEL_MONIT01",
+   "event": "EMSR441",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-06-09T10:01:23.232000+00:00",
+   "bytes": 2751384,
+   "bounds_wgs84": [
+    27.4981,
+    68.6358,
+    27.6122,
+    68.6793
+   ]
+  },
+  {
+   "event_id": "EMSR467_AOI05_GRA_PRODUCT",
+   "event": "EMSR467",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-10-08T10:28:56.531000+00:00",
+   "bytes": 2775362,
+   "bounds_wgs84": [
+    7.5039,
+    43.9663,
+    7.5653,
+    44.0103
+   ]
+  },
+  {
+   "event_id": "EMSR636_AOI05_GRA_PRODUCT",
+   "event": "EMSR636",
+   "source": "CopernicusEMS",
+   "s2_date": "2022-10-09T02:33:28.067500+00:00",
+   "bytes": 2831446,
+   "bounds_wgs84": [
+    120.9318,
+    15.2908,
+    120.9809,
+    15.3298
+   ]
+  },
+  {
+   "event_id": "EMSR631_AOI01_GRA_PRODUCT",
+   "event": "EMSR631",
+   "source": "CopernicusEMS",
+   "s2_date": "2022-09-15T06:12:06.209000+00:00",
+   "bytes": 2955933,
+   "bounds_wgs84": [
+    68.923,
+    26.0209,
+    68.9732,
+    26.0662
+   ]
+  },
+  {
+   "event_id": "EMSR480_AOI04_GRA_PRODUCT",
+   "event": "EMSR480",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-11-13T09:10:40.308000+00:00",
+   "bytes": 3141910,
+   "bounds_wgs84": [
+    24.5335,
+    35.2598,
+    24.594,
+    35.3041
+   ]
+  },
+  {
+   "event_id": "EMSR352_AOI06_GRA_PRODUCT",
+   "event": "EMSR352",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-04-08T07:31:14+00:00",
+   "bytes": 3258022,
+   "bounds_wgs84": [
+    48.4093,
+    31.4428,
+    48.4895,
+    31.4997
+   ]
+  },
+  {
+   "event_id": "EMSR269_06VEITONGO_GRA_MONIT01_v1",
+   "event": "EMSR269",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-02-17T21:59:06.460000+00:00",
+   "bytes": 4399057,
+   "bounds_wgs84": [
+    -175.243,
+    -21.2061,
+    -175.1794,
+    -21.1569
+   ]
+  },
+  {
+   "event_id": "EMSR564_AOI08_GRA_PRODUCT",
+   "event": "EMSR564",
+   "source": "CopernicusEMS",
+   "s2_date": "2022-02-09T07:05:42.120000+00:00",
+   "bytes": 4428528,
+   "bounds_wgs84": [
+    47.985,
+    -22.1826,
+    48.0319,
+    -22.115
+   ]
+  },
+  {
+   "event_id": "EMSR274_15FENERIVE_DEL_v1",
+   "event": "EMSR274",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-03-27T07:03:37.610000+00:00",
+   "bytes": 4677403,
+   "bounds_wgs84": [
+    49.3776,
+    -17.4063,
+    49.4427,
+    -17.355
+   ]
+  },
+  {
+   "event_id": "EMSR354_AOI06_GRA_PRODUCT",
+   "event": "EMSR354",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-05-08T07:43:24+00:00",
+   "bytes": 4856396,
+   "bounds_wgs84": [
+    40.4706,
+    -12.267,
+    40.519,
+    -12.1936
+   ]
+  },
+  {
+   "event_id": "EMSR324_06TREBES_GRA_v1",
+   "event": "EMSR324",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-10-23T10:51:07.460000+00:00",
+   "bytes": 4932775,
+   "bounds_wgs84": [
+    2.3887,
+    43.19,
+    2.4766,
+    43.2432
+   ]
+  },
+  {
+   "event_id": "EMSR294_01MANDRAMAGOULA_GRA_v1",
+   "event": "EMSR294",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-06-30T09:19:15.390000+00:00",
+   "bytes": 5125493,
+   "bounds_wgs84": [
+    23.4755,
+    38.0383,
+    23.5569,
+    38.0921
+   ]
+  },
+  {
+   "event_id": "ST20180522_WaterExtent_Teknaf",
+   "event": "UNOSATST20180522",
+   "source": "unosat",
+   "s2_date": "2018-05-24T04:26:05.620000+00:00",
+   "bytes": 5276837,
+   "bounds_wgs84": [
+    92.23,
+    20.917,
+    92.2732,
+    21.0058
+   ]
+  },
+  {
+   "event_id": "EMSR330_05LENTINIDETAIL_GRA_v1",
+   "event": "EMSR330",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-10-27T09:43:37.590000+00:00",
+   "bytes": 6172587,
+   "bounds_wgs84": [
+    14.9586,
+    37.2597,
+    15.0489,
+    37.3182
+   ]
+  },
+  {
+   "event_id": "EMSR413_AOI03_GRA_PRODUCT",
+   "event": "EMSR413",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-11-27T09:19:48.728000+00:00",
+   "bytes": 6343718,
+   "bounds_wgs84": [
+    23.324,
+    37.9646,
+    23.4253,
+    38.0207
+   ]
+  },
+  {
+   "event_id": "EMSR279_08ALCALADEEBRO_GRA_v1",
+   "event": "EMSR279",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-04-19T11:01:27.730000+00:00",
+   "bytes": 7382388,
+   "bounds_wgs84": [
+    -1.2357,
+    41.7766,
+    -1.1303,
+    41.8422
+   ]
+  },
+  {
+   "event_id": "EMSR323_09CALAMILLOR_GRA_v1",
+   "event": "EMSR323",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-10-15T10:45:06.280000+00:00",
+   "bytes": 7709181,
+   "bounds_wgs84": [
+    3.3291,
+    39.5728,
+    3.4235,
+    39.6419
+   ]
+  },
+  {
+   "event_id": "EMSR339_06BEIRASW_DEL_v1",
+   "event": "EMSR339",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-01-26T07:55:25+00:00",
+   "bytes": 8801484,
+   "bounds_wgs84": [
+    34.7899,
+    -19.8573,
+    34.8744,
+    -19.7788
+   ]
+  },
+  {
+   "event_id": "EMSR550_AOI11_DEL_MONIT01",
+   "event": "EMSR550",
+   "source": "CopernicusEMS",
+   "s2_date": "2021-11-18T00:16:03.985500+00:00",
+   "bytes": 8917375,
+   "bounds_wgs84": [
+    148.354,
+    -33.5968,
+    148.4378,
+    -33.5064
+   ]
+  },
+  {
+   "event_id": "EMSR392_AOI01_DEL_MONIT03",
+   "event": "EMSR392",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-10-13T03:35:16.669000+00:00",
+   "bytes": 8996613,
+   "bounds_wgs84": [
+    105.7391,
+    9.9883,
+    105.8011,
+    10.0759
+   ]
+  },
+  {
+   "event_id": "EMSR475_AOI02_DEL_PRODUCT",
+   "event": "EMSR475",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-11-01T03:33:09.469000+00:00",
+   "bytes": 9137209,
+   "bounds_wgs84": [
+    105.8468,
+    18.2995,
+    105.936,
+    18.372
+   ]
+  },
+  {
+   "event_id": "EMSR456_AOI03_DEL_PRODUCT",
+   "event": "EMSR456",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-08-11T16:19:20.357000+00:00",
+   "bytes": 9161728,
+   "bounds_wgs84": [
+    -84.0309,
+    14.7083,
+    -83.9291,
+    14.7715
+   ]
+  },
+  {
+   "event_id": "EMSR260_01CICOGNARA_DEL_MONIT01_v2",
+   "event": "EMSR260",
+   "source": "CopernicusEMS",
+   "s2_date": "2017-12-18T10:28:02.530000+00:00",
+   "bytes": 9556571,
+   "bounds_wgs84": [
+    10.3764,
+    44.8751,
+    10.51,
+    44.9538
+   ]
+  },
+  {
+   "event_id": "EMSR464_AOI01_DEL_PRODUCT",
+   "event": "EMSR464",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-09-22T03:33:09.489000+00:00",
+   "bytes": 9595456,
+   "bounds_wgs84": [
+    105.8468,
+    18.2995,
+    105.936,
+    18.372
+   ]
+  },
+  {
+   "event_id": "EMSR517_AOI11_GRA_PRODUCT",
+   "event": "EMSR517",
+   "source": "CopernicusEMS",
+   "s2_date": "2021-07-18T10:36:56.400500+00:00",
+   "bytes": 9858949,
+   "bounds_wgs84": [
+    6.9116,
+    50.979,
+    7.0262,
+    51.0711
+   ]
+  },
+  {
+   "event_id": "EMSR249_15LAHINCH_DEL_v1",
+   "event": "EMSR249",
+   "source": "CopernicusEMS",
+   "s2_date": "2017-10-26T11:53:46.460000+00:00",
+   "bytes": 10000571,
+   "bounds_wgs84": [
+    -9.4285,
+    52.8898,
+    -9.2748,
+    52.9661
+   ]
+  },
+  {
+   "event_id": "EMSR567_AOI05_DEL_PRODUCT",
+   "event": "EMSR567",
+   "source": "CopernicusEMS",
+   "s2_date": "2022-02-28T00:04:26.371000+00:00",
+   "bytes": 11314620,
+   "bounds_wgs84": [
+    152.56,
+    -27.4125,
+    152.6629,
+    -27.321
+   ]
+  },
+  {
+   "event_id": "EMSR329_04SANVITO_GRA_v2",
+   "event": "EMSR329",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-10-26T10:19:40.760000+00:00",
+   "bytes": 11422156,
+   "bounds_wgs84": [
+    9.507,
+    39.3698,
+    9.6328,
+    39.45
+   ]
+  },
+  {
+   "event_id": "EMSR649_AOI02_GRA_PRODUCT",
+   "event": "EMSR649",
+   "source": "CopernicusEMS",
+   "s2_date": "2023-02-11T10:00:21.676500+00:00",
+   "bytes": 11821469,
+   "bounds_wgs84": [
+    15.2399,
+    37.0049,
+    15.3342,
+    37.1088
+   ]
+  },
+  {
+   "event_id": "EMSR504_AOI01_DEL_MONIT02",
+   "event": "EMSR504",
+   "source": "CopernicusEMS",
+   "s2_date": "2021-03-26T23:55:24.215000+00:00",
+   "bytes": 12092882,
+   "bounds_wgs84": [
+    152.7947,
+    -31.0985,
+    152.9228,
+    -31.0227
+   ]
+  },
+  {
+   "event_id": "EMSR255_03SCHONECK_DEL_v1",
+   "event": "EMSR255",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-01-12T10:26:30.600000+00:00",
+   "bytes": 12260296,
+   "bounds_wgs84": [
+    12.3165,
+    50.3485,
+    12.4814,
+    50.4355
+   ]
+  },
+  {
+   "event_id": "EMSR637_AOI04_DEL_PRODUCT",
+   "event": "EMSR637",
+   "source": "CopernicusEMS",
+   "s2_date": "2022-10-17T00:27:06.201000+00:00",
+   "bytes": 12910926,
+   "bounds_wgs84": [
+    144.6625,
+    -36.4287,
+    144.7496,
+    -36.2896
+   ]
+  },
+  {
+   "event_id": "EMSR442_AOI06_DEL_PRODUCT",
+   "event": "EMSR442",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-06-10T10:21:17.346000+00:00",
+   "bytes": 13079775,
+   "bounds_wgs84": [
+    24.8706,
+    69.9381,
+    25.0627,
+    70.0864
+   ]
+  },
+  {
+   "event_id": "EMSR349_01MURAMBINDANW_GRA_v1",
+   "event": "EMSR349",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-03-28T08:15:30+00:00",
+   "bytes": 18420801,
+   "bounds_wgs84": [
+    31.4658,
+    -19.2892,
+    31.5771,
+    -19.1735
+   ]
+  },
+  {
+   "event_id": "EMSR265_04ESBLY_DEL_MONIT01_v1",
+   "event": "EMSR265",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-01-26T10:53:16.460000+00:00",
+   "bytes": 22851748,
+   "bounds_wgs84": [
+    2.6917,
+    48.8674,
+    2.912,
+    48.9749
+   ]
+  },
+  {
+   "event_id": "EMSR650_AOI03_DEL_PRODUCT",
+   "event": "EMSR650",
+   "source": "CopernicusEMS",
+   "s2_date": "2023-02-19T07:57:05.329000+00:00",
+   "bytes": 22950739,
+   "bounds_wgs84": [
+    33.1905,
+    -25.3393,
+    33.332,
+    -25.2128
+   ]
+  },
+  {
+   "event_id": "EMSR405_AOI01_FEP_PRODUCT",
+   "event": "EMSR405",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-11-14T03:23:59.160500+00:00",
+   "bytes": 23636287,
+   "bounds_wgs84": [
+    108.7281,
+    15.0864,
+    108.8379,
+    15.231
+   ]
+  },
+  {
+   "event_id": "EMSR565_AOI02_DEL_PRODUCT",
+   "event": "EMSR565",
+   "source": "CopernicusEMS",
+   "s2_date": "2022-02-24T07:05:41.121500+00:00",
+   "bytes": 23710749,
+   "bounds_wgs84": [
+    48.0919,
+    -21.7032,
+    48.2282,
+    -21.5699
+   ]
+  },
+  {
+   "event_id": "LS20170416_SouthUrmiaLake_SatelliteDetectedWaterExtent",
+   "event": "UNOSATLS20170416",
+   "source": "unosat",
+   "s2_date": "2017-04-19T07:44:26.730000+00:00",
+   "bytes": 25196510,
+   "bounds_wgs84": [
+    45.5125,
+    36.9469,
+    45.7128,
+    37.0534
+   ]
+  },
+  {
+   "event_id": "EMSR283_01JORDET_DEL_MONIT02_v1",
+   "event": "EMSR283",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-05-15T10:30:24.460000+00:00",
+   "bytes": 25225332,
+   "bounds_wgs84": [
+    12.0533,
+    61.3415,
+    12.3956,
+    61.4802
+   ]
+  },
+  {
+   "event_id": "EMSR502_AOI04_DEL_MONIT01",
+   "event": "EMSR502",
+   "source": "CopernicusEMS",
+   "s2_date": "2021-02-27T11:57:00.238000+00:00",
+   "bytes": 25633359,
+   "bounds_wgs84": [
+    -9.6637,
+    52.0136,
+    -9.3437,
+    52.1048
+   ]
+  },
+  {
+   "event_id": "EMSR434_AOI05_GRA_PRODUCT",
+   "event": "EMSR434",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-04-18T23:10:53.016000+00:00",
+   "bytes": 25752853,
+   "bounds_wgs84": [
+    167.7223,
+    -16.5601,
+    167.8573,
+    -16.4115
+   ]
+  },
+  {
+   "event_id": "EMSR399_AOI01_DEL_PRODUCT",
+   "event": "EMSR399",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-11-07T03:35:18.215000+00:00",
+   "bytes": 27812105,
+   "bounds_wgs84": [
+    105.6848,
+    9.9664,
+    105.8212,
+    10.0995
+   ]
+  },
+  {
+   "event_id": "EMSR348_02CHINDE_DEL_v1",
+   "event": "EMSR348",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-03-22T07:55:06.500000+00:00",
+   "bytes": 28291889,
+   "bounds_wgs84": [
+    36.3502,
+    -18.6558,
+    36.509,
+    -18.5308
+   ]
+  },
+  {
+   "event_id": "EMSR645_AOI04_DEL_PRODUCT",
+   "event": "EMSR645",
+   "source": "CopernicusEMS",
+   "s2_date": "2023-01-31T07:25:11.809000+00:00",
+   "bytes": 29265564,
+   "bounds_wgs84": [
+    44.4526,
+    -19.7884,
+    44.8101,
+    -19.6355
+   ]
+  },
+  {
+   "event_id": "EMSR411_AOI01_DEL_PRODUCT",
+   "event": "EMSR411",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-11-28T10:28:48.760500+00:00",
+   "bytes": 32175867,
+   "bounds_wgs84": [
+    6.4983,
+    43.3652,
+    6.7603,
+    43.554
+   ]
+  },
+  {
+   "event_id": "EMSR258_12SEVASTER_DEL_v2",
+   "event": "EMSR258",
+   "source": "CopernicusEMS",
+   "s2_date": "2017-12-08T09:33:54.460000+00:00",
+   "bytes": 33010326,
+   "bounds_wgs84": [
+    19.6885,
+    40.3177,
+    19.9419,
+    40.436
+   ]
+  },
+  {
+   "event_id": "EMSR359_AOI02_DEL_PRODUCT",
+   "event": "EMSR359",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-05-14T10:18:32+00:00",
+   "bytes": 35212764,
+   "bounds_wgs84": [
+    10.7714,
+    44.5841,
+    11.0241,
+    44.7221
+   ]
+  },
+  {
+   "event_id": "EMSR319_05SOMAA_DEL_v2",
+   "event": "EMSR319",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-10-08T10:08:22.290000+00:00",
+   "bytes": 36793832,
+   "bounds_wgs84": [
+    10.6724,
+    36.4163,
+    10.9004,
+    36.5678
+   ]
+  },
+  {
+   "event_id": "EMSR511_AOI03_DEL_MONIT01",
+   "event": "EMSR511",
+   "source": "CopernicusEMS",
+   "s2_date": "2021-05-25T10:02:20.026000+00:00",
+   "bytes": 37937045,
+   "bounds_wgs84": [
+    24.0108,
+    65.7404,
+    24.3049,
+    65.9987
+   ]
+  },
+  {
+   "event_id": "EMSR314_04OTUOCHAAGULERI_DEL_v1",
+   "event": "EMSR314",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-09-30T10:04:54.940000+00:00",
+   "bytes": 39930294,
+   "bounds_wgs84": [
+    6.7069,
+    6.2292,
+    6.8703,
+    6.4049
+   ]
+  },
+  {
+   "event_id": "ST_20170426_WaterExtent_LesCayes_Cavaillon",
+   "event": "UNOSATST20170426",
+   "source": "unosat",
+   "s2_date": "2017-04-27T15:36:20.460000+00:00",
+   "bytes": 41851797,
+   "bounds_wgs84": [
+    -73.8085,
+    18.1794,
+    -73.6025,
+    18.3253
+   ]
+  },
+  {
+   "event_id": "EMSR358_AOI04_DEL_MONIT01",
+   "event": "EMSR358",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-05-18T09:58:11+00:00",
+   "bytes": 44707643,
+   "bounds_wgs84": [
+    17.382,
+    44.9735,
+    17.6457,
+    45.1546
+   ]
+  },
+  {
+   "event_id": "EMSR271_04STEFANOVIKIO_DEL_v1",
+   "event": "EMSR271",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-02-28T09:25:36.940000+00:00",
+   "bytes": 49505922,
+   "bounds_wgs84": [
+    22.5719,
+    39.3474,
+    22.8393,
+    39.5195
+   ]
+  },
+  {
+   "event_id": "EMSR570_AOI01_DEL_MONIT01",
+   "event": "EMSR570",
+   "source": "CopernicusEMS",
+   "s2_date": "2022-03-31T23:54:42.176500+00:00",
+   "bytes": 49787561,
+   "bounds_wgs84": [
+    153.19,
+    -29.0985,
+    153.3997,
+    -28.8975
+   ]
+  },
+  {
+   "event_id": "EMSR421_AOI05_DEL_PRODUCT",
+   "event": "EMSR421",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-01-28T10:49:03.350000+00:00",
+   "bytes": 54571116,
+   "bounds_wgs84": [
+    2.7969,
+    42.6358,
+    3.0511,
+    42.8203
+   ]
+  },
+  {
+   "event_id": "EMSR561_AOI03_DEL_PRODUCT",
+   "event": "EMSR561",
+   "source": "CopernicusEMS",
+   "s2_date": "2022-01-30T07:54:41.968000+00:00",
+   "bytes": 57517067,
+   "bounds_wgs84": [
+    35.1329,
+    -17.0604,
+    35.3013,
+    -16.8116
+   ]
+  },
+  {
+   "event_id": "01042016_Holmes_Creek_at_Vernon_FL",
+   "event": "GLOFIMR01042016",
+   "source": "glofimr",
+   "s2_date": "2016-01-11T16:37:13.424000+00:00",
+   "bytes": 58473567,
+   "bounds_wgs84": [
+    -85.8801,
+    30.5301,
+    -85.6203,
+    30.713
+   ]
+  },
+  {
+   "event_id": "EMSR424_AOI04_DEL_PRODUCT",
+   "event": "EMSR424",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-02-08T07:14:12.001000+00:00",
+   "bytes": 61622083,
+   "bounds_wgs84": [
+    46.7099,
+    -17.0615,
+    46.8982,
+    -16.8269
+   ]
+  },
+  {
+   "event_id": "EMSR554_AOI03_DEL_MONIT01",
+   "event": "EMSR554",
+   "source": "CopernicusEMS",
+   "s2_date": "2021-12-08T00:15:06.522000+00:00",
+   "bytes": 73208439,
+   "bounds_wgs84": [
+    149.2185,
+    -30.3307,
+    149.5429,
+    -30.1245
+   ]
+  },
+  {
+   "event_id": "EMSR280_05MORA_DEL_MONIT03_v1",
+   "event": "EMSR280",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-05-02T10:20:25.460000+00:00",
+   "bytes": 73330868,
+   "bounds_wgs84": [
+    13.9048,
+    60.9665,
+    14.7432,
+    61.3012
+   ]
+  },
+  {
+   "event_id": "EMSR321_02CHOLUTECA_DEL_MONIT01_v1",
+   "event": "EMSR321",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-10-14T16:23:13.860000+00:00",
+   "bytes": 75468892,
+   "bounds_wgs84": [
+    -87.3637,
+    13.1862,
+    -87.1073,
+    13.3911
+   ]
+  },
+  {
+   "event_id": "EMSR482_AOI02_DEL_PRODUCT",
+   "event": "EMSR482",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-11-24T16:19:45.144000+00:00",
+   "bytes": 79555954,
+   "bounds_wgs84": [
+    -84.3074,
+    13.0024,
+    -84.0355,
+    13.214
+   ]
+  },
+  {
+   "event_id": "EMSR293_01BOTOSANI_GRA_v1",
+   "event": "EMSR293",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-07-05T09:15:39.945000+00:00",
+   "bytes": 81712549,
+   "bounds_wgs84": [
+    26.5567,
+    47.608,
+    26.9751,
+    47.8269
+   ]
+  },
+  {
+   "event_id": "EMSR548_AOI02_FEP_PRODUCT",
+   "event": "EMSR548",
+   "source": "CopernicusEMS",
+   "s2_date": "2021-10-26T09:50:30.712500+00:00",
+   "bytes": 90495025,
+   "bounds_wgs84": [
+    14.9807,
+    36.9433,
+    15.2957,
+    37.1946
+   ]
+  },
+  {
+   "event_id": "EMSR481_AOI02_DEL_PRODUCT",
+   "event": "EMSR481",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-11-12T16:29:55.546000+00:00",
+   "bytes": 93193304,
+   "bounds_wgs84": [
+    -87.4271,
+    13.0945,
+    -87.1649,
+    13.3426
+   ]
+  },
+  {
+   "event_id": "EMSR444_AOI03_DEL_PRODUCT",
+   "event": "EMSR444",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-06-27T09:27:13.174000+00:00",
+   "bytes": 97898847,
+   "bounds_wgs84": [
+    23.1819,
+    47.993,
+    23.6604,
+    48.3241
+   ]
+  },
+  {
+   "event_id": "EMSR346_03BEIRA_DEL_v1",
+   "event": "EMSR346",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-03-12T07:55:24+00:00",
+   "bytes": 100654655,
+   "bounds_wgs84": [
+    34.7097,
+    -19.8641,
+    34.9829,
+    -19.5863
+   ]
+  },
+  {
+   "event_id": "EMSR267_01RUSNE_DEL_v1",
+   "event": "EMSR267",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-02-02T09:54:32.950000+00:00",
+   "bytes": 109787345,
+   "bounds_wgs84": [
+    21.182,
+    55.1739,
+    21.7093,
+    55.4215
+   ]
+  },
+  {
+   "event_id": "EMSR514_AOI02_DEL_PRODUCT",
+   "event": "EMSR514",
+   "source": "CopernicusEMS",
+   "s2_date": "2021-06-14T14:30:54.125000+00:00",
+   "bytes": 119695119,
+   "bounds_wgs84": [
+    -60.4114,
+    6.7478,
+    -60.0447,
+    6.9689
+   ]
+  },
+  {
+   "event_id": "EMSR520_AOI01_DEL_PRODUCT",
+   "event": "EMSR520",
+   "source": "CopernicusEMS",
+   "s2_date": "2021-07-19T10:56:43.831000+00:00",
+   "bytes": 120527220,
+   "bounds_wgs84": [
+    5.7899,
+    51.1084,
+    6.2045,
+    51.4628
+   ]
+  },
+  {
+   "event_id": "EMSR350_05LONGREACH_DEL_v1",
+   "event": "EMSR350",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-03-30T00:33:33+00:00",
+   "bytes": 121674775,
+   "bounds_wgs84": [
+    144.0732,
+    -23.5777,
+    144.4366,
+    -23.3001
+   ]
+  },
+  {
+   "event_id": "EMSR292_01CHRISOUPOLI_DEL_v1",
+   "event": "EMSR292",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-06-30T09:06:52.190000+00:00",
+   "bytes": 122244371,
+   "bounds_wgs84": [
+    24.5342,
+    40.8329,
+    24.9759,
+    41.1121
+   ]
+  },
+  {
+   "event_id": "EMSR275_02KUTINA_DEL_MONIT01_v1",
+   "event": "EMSR275",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-03-24T09:55:37.730000+00:00",
+   "bytes": 138485611,
+   "bounds_wgs84": [
+    16.386,
+    45.261,
+    16.8818,
+    45.5511
+   ]
+  },
+  {
+   "event_id": "EMSR416_AOI01_DEL_PRODUCT",
+   "event": "EMSR416",
+   "source": "CopernicusEMS",
+   "s2_date": "2019-12-15T11:08:56.936000+00:00",
+   "bytes": 145347665,
+   "bounds_wgs84": [
+    -1.3046,
+    43.3614,
+    -0.7904,
+    43.6518
+   ]
+  },
+  {
+   "event_id": "EMSR483_AOI03_GRA_PRODUCT",
+   "event": "EMSR483",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-12-05T09:49:46.023000+00:00",
+   "bytes": 146890111,
+   "bounds_wgs84": [
+    16.8061,
+    39.1581,
+    17.1721,
+    39.5211
+   ]
+  },
+  {
+   "event_id": "EMSR501_AOI01_DEL_MONIT01",
+   "event": "EMSR501",
+   "source": "CopernicusEMS",
+   "s2_date": "2021-02-15T09:38:58.363000+00:00",
+   "bytes": 169932844,
+   "bounds_wgs84": [
+    19.2222,
+    41.8334,
+    19.7831,
+    42.1103
+   ]
+  },
+  {
+   "event_id": "EMSR486_AOI02_DEL_PRODUCT",
+   "event": "EMSR486",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-12-09T10:19:34.766500+00:00",
+   "bytes": 179648697,
+   "bounds_wgs84": [
+    9.2691,
+    40.3822,
+    9.7671,
+    40.6986
+   ]
+  },
+  {
+   "event_id": "EMSR586_AOI02_DEL_PRODUCT",
+   "event": "EMSR586",
+   "source": "CopernicusEMS",
+   "s2_date": "2022-07-08T00:06:23.002500+00:00",
+   "bytes": 180766411,
+   "bounds_wgs84": [
+    150.5549,
+    -33.8582,
+    151.0007,
+    -33.5266
+   ]
+  },
+  {
+   "event_id": "EMSR427_AOI07_DEL_PRODUCT",
+   "event": "EMSR427",
+   "source": "CopernicusEMS",
+   "s2_date": "2020-02-28T10:15:13.678500+00:00",
+   "bytes": 205358783,
+   "bounds_wgs84": [
+    13.609,
+    55.725,
+    14.4658,
+    56.6431
+   ]
+  },
+  {
+   "event_id": "TX_20160811_WaterExtent_WetSoil_Khartoum",
+   "event": "UNOSATTX20160811",
+   "source": "unosat",
+   "s2_date": "2016-08-11T08:25:34.770000+00:00",
+   "bytes": 235966474,
+   "bounds_wgs84": [
+    32.4217,
+    15.3156,
+    32.7514,
+    15.8425
+   ]
+  },
+  {
+   "event_id": "EMSR326_02ANTEQUERA_DEL_MONIT01_v1",
+   "event": "EMSR326",
+   "source": "CopernicusEMS",
+   "s2_date": "2018-10-24T11:18:39+00:00",
+   "bytes": 240956668,
+   "bounds_wgs84": [
+    -4.973,
+    36.8794,
+    -4.2705,
+    37.3522
+   ]
+  },
+  {
+   "event_id": "TSX_20170308_WaterExtent_Maroantsetra",
+   "event": "UNOSATTSX20170308",
+   "source": "unosat",
+   "s2_date": "2017-03-12T07:02:26.459000+00:00",
+   "bytes": 298906598,
+   "bounds_wgs84": [
+    49.4878,
+    -15.6277,
+    50.0279,
+    -15.2061
+   ]
+  },
+  {
+   "event_id": "ST_20170823_WaterExtent_AmuruAndAdjumaniDistricts",
+   "event": "UNOSATST20170823",
+   "source": "unosat",
+   "s2_date": "2017-08-23T08:09:52.030000+00:00",
+   "bytes": 341047461,
+   "bounds_wgs84": [
+    31.5283,
+    3.2935,
+    32.3795,
+    3.8302
+   ]
+  }
+ ]
+}

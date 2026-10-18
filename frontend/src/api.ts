@@ -394,7 +394,8 @@ export interface WorldFloodsEval {
 }
 export interface ExternalEval {
   worldfloods: WorldFloodsEval | null;
-  bootstrap: { method: string; baseline: string; splits: Record<string, { n_chips: number; comparisons: Record<string, { delta_iou: number; ci95: [number, number]; p_delta_le_0: number }> }> } | null;
+  bootstrap: { method: string; baseline: string; splits: Record<string, { n_chips: number; comparisons: Record<string, { delta_iou: number; ci95: [number, number]; p_delta_le_0: number }>;
+    multi_dataset?: Record<string, { reference: string; delta_iou: number; ci95: [number, number]; p_delta_le_0: number }> }> } | null;
   audit: {
     splits: Record<string, number>; chip_id_duplicates_across_splits: number; bolivia_in_train_or_valid: number;
     geographic_proximity_to_train: Record<string, { median_km_to_nearest_train_chip: number; min_km: number; share_within_10km: number; chips_whose_footprint_overlaps_a_train_chip: number }>;

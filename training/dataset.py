@@ -148,12 +148,31 @@ def load_index(root: Path | None = None) -> list[dict]:
     return json.loads((root or processed_dir()).joinpath("index.json").read_text())["chips"]
 
 
+EXTRA_SPLITS = {"wf_train": "index_worldfloods.json"}  # additional training sources (S2 only)
+S2_ONLY = {"s2", "s2i", "rgb"}
+
+
 def split_ids(split: str, root: Path | None = None) -> list[str]:
-    return [c["id"] for c in load_index(root) if c["split"] == split]
+    """Chip ids of a split; '+' combines sources, e.g. 'train+wf_train'."""
+    out: list[str] = []
+    for part in split.split("+"):
+        if part in EXTRA_SPLITS:
+            p = (root or processed_dir()) / EXTRA_SPLITS[part]
+            if not p.exists():
+                raise RuntimeError(f"{p.name} missing; run python -m training.prepare_worldfloods")
+            out += [c["id"] for c in json.loads(p.read_text())["chips"] if c["split"] == part]
+        else:
+            out += [c["id"] for c in load_index(root) if c["split"] == part]
+    return out
+
+
+def chip_path(chip_id: str, root: Path | None = None) -> Path:
+    base = root or processed_dir()
+    return base / ("wf_chips" if chip_id.startswith("WF_") else "chips") / f"{chip_id}.npz"
 
 
 def load_chip(chip_id: str, root: Path | None = None) -> dict:
-    with np.load((root or processed_dir()) / "chips" / f"{chip_id}.npz") as z:
+    with np.load(chip_path(chip_id, root)) as z:
         return {k: z[k] for k in z.files}
 
 
@@ -165,28 +184,34 @@ class FloodDataset(Dataset):
             "s2i": ("s2",)}
 
     def __init__(self, split: str, modality: str, crop_size: int | None = None, crops_per_chip: int = 1,
-                 augment: bool = False, root: Path | None = None, seed: int = 0, radiometric: dict | None = None):
+                 augment: bool = False, root: Path | None = None, seed: int = 0, radiometric: dict | None = None,
+                 extra_crops_per_chip: int | None = None):
         if modality not in MODALITIES:
             raise ValueError(f"unknown modality {modality!r}; choose from {list(MODALITIES)}")
         self.root = Path(root) if root else processed_dir()
         self.ids = split_ids(split, self.root)
         if not self.ids:
             raise RuntimeError(f"no chips for split {split!r} in {self.root}; run training/prepare_data.py")
+        if any(i.startswith("WF_") for i in self.ids) and modality not in S2_ONLY:
+            raise ValueError(f"WorldFloods tiles have no Sentinel-1: modality {modality!r} needs SAR; use s2 / s2i / rgb")
         self.modality, self.crop, self.k, self.augment = modality, crop_size, crops_per_chip, augment
+        # sample list: each Sen1Floods11 chip k times, each extra-source tile extra_crops_per_chip times
+        k_extra = crops_per_chip if extra_crops_per_chip is None else extra_crops_per_chip
+        self.items = [i for cid in self.ids for i in [cid] * (k_extra if cid.startswith("WF_") else crops_per_chip)]
         self.stats = load_stats(str(self.root)) if modality != "rgb" else None
         self.rng = np.random.default_rng(seed)
         self.radiometric = radiometric if (augment and radiometric and radiometric.get("enabled")) else None
 
     def __len__(self) -> int:
-        return len(self.ids) * self.k
+        return len(self.items)
 
     def __getitem__(self, idx: int):
-        i = idx // self.k
+        cid = self.items[idx]
         # read only the arrays this modality needs (npz members are loaded lazily)
-        with np.load(self.root / "chips" / f"{self.ids[i]}.npz") as z:
+        with np.load(chip_path(cid, self.root)) as z:
             raw = {k: z[k] for k in self.KEYS[self.modality]}
             y = z["label"]
-        if self.crop and self.crop < y.shape[-1]:
+        if self.crop and (y.shape[0] > self.crop or y.shape[1] > self.crop):
             r, c = self._crop_origin(y)
             sl = (slice(r, r + self.crop), slice(c, c + self.crop))
             raw = {k: v[(slice(None),) + sl] for k, v in raw.items()}
@@ -198,7 +223,7 @@ class FloodDataset(Dataset):
         y = y.astype(np.int64)
         if self.augment:
             x, y = self._augment(x, y)
-        return torch.from_numpy(np.ascontiguousarray(x)), torch.from_numpy(np.ascontiguousarray(y)), self.ids[i]
+        return torch.from_numpy(np.ascontiguousarray(x)), torch.from_numpy(np.ascontiguousarray(y)), cid
 
     def _crop_origin(self, y: np.ndarray) -> tuple[int, int]:
         h, w = y.shape

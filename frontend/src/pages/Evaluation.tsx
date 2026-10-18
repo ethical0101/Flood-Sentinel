@@ -164,6 +164,15 @@ export default function Evaluation() {
                     const sig = c.ci95[0] > 0 ? "text-ok font-semibold" : c.ci95[1] < 0 ? "text-bad font-semibold" : "text-ink-2";
                     return <td key={i} className={`px-3 py-1.5 text-right ${sig}`}>{c.delta_iou >= 0 ? "+" : ""}{c.delta_iou.toFixed(4)} <span className="text-ink-3">[{c.ci95[0].toFixed(3)}, {c.ci95[1].toFixed(3)}]</span></td>;
                   })}</tr>))}
+              {Object.keys(ext.data.bootstrap.splits.test?.multi_dataset ?? {}).map((r) => (
+                <tr key={r} className="bg-accent-soft/40"><td className="px-3 py-1.5"><span className="font-mono text-[11px]">{r}</span>
+                  <span className="ml-1 text-[10.5px] text-ink-3">vs {ext.data!.bootstrap!.splits.test.multi_dataset![r].reference} (same recipe, + WorldFloods data)</span></td>
+                  {Object.values(ext.data!.bootstrap!.splits).map((sp, i) => {
+                    const c = sp.multi_dataset?.[r];
+                    if (!c) return <td key={i} className="px-3 py-1.5 text-right text-ink-3">–</td>;
+                    const sig = c.ci95[0] > 0 ? "text-ok font-semibold" : c.ci95[1] < 0 ? "text-bad font-semibold" : "text-ink-2";
+                    return <td key={i} className={`px-3 py-1.5 text-right ${sig}`}>{c.delta_iou >= 0 ? "+" : ""}{c.delta_iou.toFixed(4)} <span className="text-ink-3">[{c.ci95[0].toFixed(3)}, {c.ci95[1].toFixed(3)}]</span></td>;
+                  })}</tr>))}
             </tbody>
           </table>
         </Panel>

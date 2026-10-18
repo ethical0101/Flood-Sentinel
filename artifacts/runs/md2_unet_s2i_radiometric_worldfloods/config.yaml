@@ -1,0 +1,37 @@
+seed: 42
+run_name: md2_unet_s2i_radiometric_worldfloods
+data:
+  modality: s2i
+  crop_size: 256
+  crops_per_chip: 4
+  train_split: train+wf_train
+  extra_crops_per_chip: 1
+  num_workers: 2
+  augment: true
+  radiometric:
+    enabled: true
+    p: 0.8
+    s2_gain:
+    - 0.75
+    - 1.25
+    s2_band_jitter: 0.05
+    s1_offset_db: 2.0
+    s1_pol_jitter_db: 0.5
+model:
+  arch: unet
+  encoder: resnet34
+  encoder_weights: imagenet
+train:
+  epochs: 60
+  batch_size: 8
+  grad_accum: 1
+  lr: 0.0005
+  weight_decay: 0.0001
+  warmup_epochs: 2
+  amp: true
+  bce_weight: 1.0
+  dice_weight: 1.0
+  pos_weight: null
+  early_stopping_patience: 15
+  monitor: val_iou_water
+  threshold: 0.5

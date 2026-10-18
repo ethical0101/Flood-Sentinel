@@ -273,6 +273,8 @@ def main() -> None:
     ap.add_argument("--threshold", type=float, default=0.5)
     ap.add_argument("--tta", action="store_true")
     ap.add_argument("--skip-baselines", action="store_true")
+    ap.add_argument("--reuse", action="store_true", help="keep existing evaluation.json files that already have "
+                                                          "validation-selected thresholds; evaluate only new runs")
     a = ap.parse_args()
 
     if a.baselines_only:
@@ -283,7 +285,16 @@ def main() -> None:
         runs = sorted(p.name for p in runs_dir().iterdir()
                       if (p / "checkpoints" / "best.pt").exists() and not p.name.startswith("smoke_")
                       and read_json(p / "status.json").get("state") == "completed")
-    results = {r: evaluate_run(r, a.threshold, a.tta) for r in runs}
+    def get(r):
+        p = runs_dir() / r / "evaluation.json"
+        if a.reuse and p.exists():
+            ev = read_json(p)
+            if "val_selected_threshold" in ev:  # already evaluated with the current protocol
+                print(f"  {r:28s} reusing evaluation.json", flush=True)
+                return ev
+        return evaluate_run(r, a.threshold, a.tta)
+
+    results = {r: get(r) for r in runs}
     if a.all:
         baselines = read_json(artifacts_dir() / "baselines.json") if a.skip_baselines else evaluate_baselines()
         summary = {

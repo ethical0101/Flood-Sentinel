@@ -1,6 +1,27 @@
-# Real-Time Flood Segmentation and Safe-Route Prediction for Disaster Response
+# Flood-Sentinel
+### Real-Time Flood Segmentation and Safe-Route Prediction for Disaster Response using Deep Learning
 
-A locally trained deep-learning system that **maps flood water in Sentinel-1/Sentinel-2 satellite imagery** and uses the georeferenced prediction to **compare a shortest route with a flood-risk-aware route on the real OpenStreetMap road network**. It ships with a FastAPI backend and a React dashboard.
+A locally trained deep-learning system that **maps flood water in Sentinel-1/Sentinel-2 satellite imagery** and uses the georeferenced prediction to **compare a shortest route with a flood-risk-aware route on the real OpenStreetMap road network**. It ships with a FastAPI backend and a React dashboard, and everything was trained and evaluated on a single 4 GB laptop GPU (RTX 3050).
+
+**Full project report:** [docs/report.md](docs/report.md). It covers data, methods, every experiment and metric, routing evaluation, engineering, limitations and references.
+
+| Documentation | |
+|---|---|
+| [docs/report.md](docs/report.md) | Full report: all 12 models × 3 test sets, baselines, significance, latency, routing |
+| [docs/experimental_results.md](docs/experimental_results.md) | Experiment-by-experiment results (v2, multi-dataset, v1) |
+| [docs/upgrade_audit.md](docs/upgrade_audit.md) | Reproduction of v1 metrics, leakage audit, weakness analysis |
+| [docs/dataset_report.md](docs/dataset_report.md) · [docs/data_card.md](docs/data_card.md) | Datasets, licences, integrity, splits, label mappings |
+| [docs/architecture.md](docs/architecture.md) | System design, modules, endpoints |
+| [docs/ui_redesign_plan.md](docs/ui_redesign_plan.md) | Design system and page hierarchy |
+| [docs/setup_guide.md](docs/setup_guide.md) | Installation, commands, troubleshooting |
+| [docs/limitations.md](docs/limitations.md) | Known limitations and threats to validity |
+| [docs/system_preflight.md](docs/system_preflight.md) | Hardware and storage inspection |
+
+**Datasets:**
+* trained on **Sen1Floods11** (hand-labelled, 446 chips);
+* two multi-dataset models additionally trained on a **WorldFloods v2** subset (97 scenes / 75 events, 4.85 GB);
+* evaluated on the Sen1Floods11 test split, the unseen **Bolivia** event and the **WorldFloods v2 test split** (18 scenes);
+* **OpenStreetMap** roads used for routing.
 
 > **Research prototype.** Flood extents are model estimates and routes are not verified. Do not use them for real evacuation or navigation decisions; follow official emergency services and verified road-closure information.
 
@@ -10,6 +31,7 @@ A locally trained deep-learning system that **maps flood water in Sentinel-1/Sen
 | **U-Net ResNet-34, S1+S2** (default; threshold 0.40 chosen on validation) | **IoU 0.825** | IoU 0.794 | n/a (needs SAR) |
 | U-Net ResNet-34, S2 only (v1) | IoU 0.816 | IoU 0.774 | **IoU 0.781** |
 | v2: U-Net + NDWI/MNDWI channels + radiometric aug. (S1+S2 / S2) | IoU 0.827 / 0.825 | **IoU 0.817 / 0.818** | — / IoU 0.767 |
+| Multi-dataset: U-Net S2 trained on Sen1Floods11 + WorldFloods subset | IoU 0.806 | IoU 0.811 | IoU 0.761 |
 | NDWI > 0 (non-learned) | IoU 0.758 | **IoU 0.832** | IoU 0.533 |
 | MNDWI > 0 (non-learned) | IoU 0.650 | IoU 0.551 | IoU 0.748 |
 | Inference, 512×512 chip, RTX 3050 Laptop | 17 ms model-only, ≈46 ms end-to-end | | |
@@ -19,6 +41,9 @@ A locally trained deep-learning system that **maps flood water in Sentinel-1/Sen
 * Learned models beat every baseline on the Sen1Floods11 test split and on the external WorldFloods set. However, the Sen1Floods11 test split is spatially close to training (see `docs/upgrade_audit.md`).
 * On the unseen Bolivia event, NDWI is still the best single method.
 * The v2 index-channel models narrow that gap (+0.02 IoU, outside the chip-bootstrap interval), but the gain is the same size as seed-to-seed noise and **does not replicate on WorldFloods**. The pre-registered selection rule therefore kept the v1 model as the default.
+* **Adding WorldFloods training data did not help.** It lowered test and WorldFloods IoU, and helped only on Bolivia. Its masks are mostly mapped from other sensors and dates (only 2 of 75 scenes come from Sentinel-2), which adds label noise for an optical model. See the report, §7.
+
+![Dashboard: command overview](docs/screenshots/command.png)
 
 Details: [docs/experimental_results.md](docs/experimental_results.md) (Part A: v2, Part B: v1).
 
@@ -181,7 +206,10 @@ Set `FLOOD_DATA_DIR` to put the data elsewhere.
 ## 15. Training
 ```powershell
 .\.venv\Scripts\python -m training.train --smoke                    # pipeline check
-.\.venv\Scripts\python scripts\run_experiments.py                   # all 5 runs + evaluation (skips finished runs)
+.\.venv\Scripts\python scripts\run_experiments.py                   # v1: 5 runs + evaluation (skips finished runs)
+.\.venv\Scripts\python scripts\run_experiments.py --suite v2 --polite   # v2: 5 controlled runs, yields GPU to other jobs
+.\.venv\Scripts\python scripts\select_worldfloods_subset.py; .\.venv\Scripts\python scripts\download_worldfloods_subset.py
+.\.venv\Scripts\python scripts\run_multidataset.py                  # tile WorldFloods, train md1/md2, evaluate
 .\.venv\Scripts\python -m training.train --resume --run unet_resnet34_s1s2
 ```
 
@@ -209,7 +237,7 @@ Open http://127.0.0.1:8000 for the dashboard and http://127.0.0.1:8000/docs for 
 
 ## 18. Tests
 ```powershell
-.\.venv\Scripts\python -m pytest                 # 64 backend + training tests (1 conditional skip)
+.\.venv\Scripts\python -m pytest                 # 65 backend + training tests pass (1 conditional skip)
 cd frontend; npm test                            # unit tests (integration tests need INTEGRATION_API)
 $env:INTEGRATION_API="http://127.0.0.1:8000"; npx vitest run   # with the API running
 ```
@@ -235,3 +263,25 @@ See [docs/limitations.md](docs/limitations.md). In short:
 * Xu, H. (2006). Modification of normalised difference water index (NDWI) to enhance open water features in remotely sensed imagery. *Int. J. Remote Sensing* 27(14), 3025–3033.
 * Ronneberger, O., Fischer, P., Brox, T. (2015). U-Net. MICCAI. Chen, L.-C. et al. (2018). DeepLabV3+. ECCV. Howard, A. et al. (2019). MobileNetV3. ICCV. He, K. et al. (2016). ResNet. CVPR.
 * Software: PyTorch, segmentation_models_pytorch, timm, rasterio, pyproj, shapely, OSMnx, NetworkX, FastAPI, React, Vite, Tailwind CSS, Leaflet, Recharts.
+
+## Screenshots
+Captured from the running application (`docs/screenshots/`):
+
+| Command overview | Segmentation studio |
+|---|---|
+| ![](docs/screenshots/command.png) | ![](docs/screenshots/segmentation.png) |
+| **Route planner** | **Evaluation lab** |
+| ![](docs/screenshots/routes.png) | ![](docs/screenshots/evaluation.png) |
+| **Training & system monitor** | **Dataset explorer** |
+| ![](docs/screenshots/training.png) | ![](docs/screenshots/datasets.png) |
+| **History & reports** | **Docs & diagnostics** |
+| ![](docs/screenshots/history.png) | ![](docs/screenshots/about.png) |
+
+## Licence and data terms
+* **Code:** no open-source licence has been chosen yet; all rights are reserved by the author until a `LICENSE` file is added.
+* **Sen1Floods11:** no explicit licence is published by its authors. It is used for non-commercial research with citation, and is **not redistributed** here (data is excluded from git).
+* **WorldFloods v2:** CC BY-NC 4.0, non-commercial use with attribution. It is not redistributed here.
+* **OpenStreetMap:** © OpenStreetMap contributors, ODbL 1.0.
+* **Imagery:** contains modified Copernicus Sentinel data (ESA).
+* The figures and screenshots in this repository are small derived visualisations for documentation.
+* Trained checkpoints are not included; reproduce them with the commands in the [report](docs/report.md#appendix-a-reproduction).

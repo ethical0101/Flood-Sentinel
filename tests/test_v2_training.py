@@ -91,3 +91,21 @@ def test_registry_fields():
             "training_time_s", "best_val_iou@0.5", "test_iou@0.5", "peak_train_gpu_mem_mib", "checkpoint"}
     assert need <= set(rows[0])
     assert all(r["state"] != "running" or r["experiment_id"] for r in rows)
+
+
+@pytest.mark.skipif(not (processed_dir() / "index_worldfloods.json").exists(), reason="WorldFloods tiles not prepared")
+def test_multidataset_split_combines_sources_and_guards_modality():
+    import json
+
+    from training.dataset import FloodDataset, split_ids
+
+    wf = json.loads((processed_dir() / "index_worldfloods.json").read_text())
+    s1f11 = split_ids("train")
+    both = split_ids("train+wf_train")
+    assert len(both) == len(s1f11) + len(wf["chips"]) and all(c["split"] == "wf_train" for c in wf["chips"])
+    ds = FloodDataset("train+wf_train", "s2", 128, crops_per_chip=4, augment=True, extra_crops_per_chip=1)
+    assert len(ds) == 4 * len(s1f11) + len(wf["chips"])
+    x, y, cid = ds[len(ds) - 1]  # last item is a WorldFloods tile
+    assert cid.startswith("WF_") and x.shape == (13, 128, 128) and set(torch.unique(y).tolist()) <= {-1, 0, 1}
+    with pytest.raises(ValueError):
+        FloodDataset("train+wf_train", "s1s2")  # WorldFloods has no Sentinel-1
