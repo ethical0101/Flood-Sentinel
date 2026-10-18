@@ -31,7 +31,15 @@ MODALITIES = {
     "s2": {"channels": 13, "bands": S2_BANDS, "description": "Sentinel-2 L1C, 13 bands (TOA reflectance)"},
     "s1s2": {"channels": 15, "bands": S1_BANDS + S2_BANDS, "description": "Sentinel-1 + Sentinel-2 stacked"},
     "rgb": {"channels": 3, "bands": ["R", "G", "B"], "description": "True-colour RGB (S2 B4,B3,B2), 8-bit stretched"},
+    # v2: the same bands plus two scale-invariant water indices computed from S2 (NDWI, MNDWI)
+    "s1s2i": {"channels": 17, "bands": S1_BANDS + S2_BANDS + ["NDWI", "MNDWI"],
+              "description": "Sentinel-1 + Sentinel-2 + NDWI/MNDWI index channels"},
+    "s2i": {"channels": 15, "bands": S2_BANDS + ["NDWI", "MNDWI"],
+            "description": "Sentinel-2 13 bands + NDWI/MNDWI index channels"},
 }
+NEEDS_S1 = {"s1", "s1s2", "s1s2i"}
+NEEDS_S2 = {"s2", "s1s2", "s2i", "s1s2i"}
+WITH_INDICES = {"s1s2i", "s2i"}
 IGNORE = -1
 IMAGENET_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
 IMAGENET_STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)
@@ -80,13 +88,49 @@ def normalize(modality: str, s1: np.ndarray | None = None, s2: np.ndarray | None
         return x.astype(np.float32)
     stats = stats or load_stats()
     parts = []
-    if modality in ("s1", "s1s2"):
+    if modality in NEEDS_S1:
         parts.append(_std(np.clip(s1.astype(np.float32), -50, 10), stats["s1_mean"], stats["s1_std"]))
-    if modality in ("s2", "s1s2"):
+    if modality in NEEDS_S2:
         parts.append(_std(s2.astype(np.float32), stats["s2_mean"], stats["s2_std"]))
+    if modality in WITH_INDICES:
+        parts.append(water_indices(s2))
     x = np.concatenate(parts, 0)
     x[~np.isfinite(x)] = 0.0
     return x.astype(np.float32)
+
+
+def water_indices(s2: np.ndarray) -> np.ndarray:
+    """(2,H,W) NDWI = (B3-B8)/(B3+B8) (McFeeters 1996) and MNDWI = (B3-B11)/(B3+B11) (Xu 2006).
+
+    Ratios are invariant to a common multiplicative brightness change, which is the main
+    radiometric shift observed on the Bolivia event (see docs/upgrade_audit.md). Values in
+    [-1, 1]; no-data (0/0) becomes 0 in normalize().
+    """
+    g, n, sw = (s2[i].astype(np.float32) for i in (2, 7, 11))
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return np.stack([(g - n) / (g + n), (g - sw) / (g + sw)]).astype(np.float32)
+
+
+def radiometric_augment(raw: dict, rng: np.random.Generator, cfg: dict) -> dict:
+    """Physically motivated photometric augmentation applied to RAW values before normalisation.
+
+    * S2 (TOA reflectance): one multiplicative gain per chip (illumination / atmosphere) times a
+      small per-band gain (sensor / atmospheric spectral variation). Zeros (no-data) stay zero.
+    * S1 (dB): one additive offset per chip (calibration / incidence-angle variation) plus a
+      small per-polarisation offset. NaNs stay NaN.
+    Geometry and label are untouched.
+    """
+    if rng.random() > cfg.get("p", 0.8):
+        return raw
+    out = dict(raw)
+    if "s2" in raw and raw["s2"] is not None:
+        lo, hi = cfg.get("s2_gain", [0.75, 1.25])
+        g = rng.uniform(lo, hi) * (1 + rng.uniform(-1, 1, size=13) * cfg.get("s2_band_jitter", 0.05))
+        out["s2"] = raw["s2"].astype(np.float32) * g[:, None, None].astype(np.float32)
+    if "s1" in raw and raw["s1"] is not None:
+        off = rng.uniform(-1, 1) * cfg.get("s1_offset_db", 2.0) + rng.uniform(-1, 1, size=2) * cfg.get("s1_pol_jitter_db", 0.5)
+        out["s1"] = raw["s1"].astype(np.float32) + off[:, None, None].astype(np.float32)
+    return out
 
 
 def _std(x: np.ndarray, mean: list[float], std: list[float]) -> np.ndarray:
@@ -117,10 +161,11 @@ def load_chip(chip_id: str, root: Path | None = None) -> dict:
 class FloodDataset(Dataset):
     """Returns (x float32 [C,H,W], y int64 [H,W] with -1 = ignore, chip_id)."""
 
-    KEYS = {"s1": ("s1",), "s2": ("s2",), "s1s2": ("s1", "s2"), "rgb": ("rgb",)}
+    KEYS = {"s1": ("s1",), "s2": ("s2",), "s1s2": ("s1", "s2"), "rgb": ("rgb",), "s1s2i": ("s1", "s2"),
+            "s2i": ("s2",)}
 
     def __init__(self, split: str, modality: str, crop_size: int | None = None, crops_per_chip: int = 1,
-                 augment: bool = False, root: Path | None = None, seed: int = 0):
+                 augment: bool = False, root: Path | None = None, seed: int = 0, radiometric: dict | None = None):
         if modality not in MODALITIES:
             raise ValueError(f"unknown modality {modality!r}; choose from {list(MODALITIES)}")
         self.root = Path(root) if root else processed_dir()
@@ -130,6 +175,7 @@ class FloodDataset(Dataset):
         self.modality, self.crop, self.k, self.augment = modality, crop_size, crops_per_chip, augment
         self.stats = load_stats(str(self.root)) if modality != "rgb" else None
         self.rng = np.random.default_rng(seed)
+        self.radiometric = radiometric if (augment and radiometric and radiometric.get("enabled")) else None
 
     def __len__(self) -> int:
         return len(self.ids) * self.k
@@ -145,6 +191,8 @@ class FloodDataset(Dataset):
             sl = (slice(r, r + self.crop), slice(c, c + self.crop))
             raw = {k: v[(slice(None),) + sl] for k, v in raw.items()}
             y = y[sl]
+        if self.radiometric:
+            raw = radiometric_augment(raw, self.rng, self.radiometric)
         # crop first, then normalise: ~4x cheaper than normalising the full chip
         x = chip_input(raw, self.modality, self.stats)
         y = y.astype(np.int64)

@@ -154,9 +154,16 @@ def evaluate_run(run: str, threshold: float = 0.5, tta: bool = False) -> dict:
     result = {"run": run, "checkpoint": "best.pt", "checkpoint_epoch": pred.epoch, "threshold": threshold,
               "tta": tta, "modality": pred.modality, "config": pred.config, "meta": pred.meta, "splits": {},
               "per_event": {}}
+    grid = [round(float(t), 2) for t in np.arange(0.1, 0.91, 0.05)]
+    if pred.device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats()
+    cms_grid: dict[str, dict[float, np.ndarray]] = {}
+    per_chip: dict[str, list] = {}
     for split in EVAL_SPLITS:
         cm = np.zeros((2, 2), np.int64)
         ious, ev_cm = [], defaultdict(lambda: np.zeros((2, 2), np.int64))
+        cms_grid[split] = {t: np.zeros((2, 2), np.int64) for t in grid}
+        per_chip[split] = []
         for c in splits[split]:
             chip = load_chip(c["id"])
             prob = pred.predict(chip_input(chip, pred.modality, pred.stats), tta=tta)
@@ -165,6 +172,9 @@ def evaluate_run(run: str, threshold: float = 0.5, tta: bool = False) -> dict:
             cm += cc
             ev_cm[c["event"]] += cc
             ious.append(chip_iou(cc))
+            for t in grid:
+                cms_grid[split][t] += confusion((prob > t).astype(np.int8), chip["label"])
+            per_chip[split].append({"chip": c["id"], "event": c["event"], "probs": prob.astype(np.float16)})
             if split == "test" and c["id"] in samples:
                 save_sample(run_dir / "samples" / f"{c['id']}.png", chip, p, prob,
                             f"{run} | {c['id']} (test split) | IoU={chip_iou(cc):.3f}")
@@ -173,6 +183,26 @@ def evaluate_run(run: str, threshold: float = 0.5, tta: bool = False) -> dict:
             result["per_event"][split] = {e: summarize(v) for e, v in sorted(ev_cm.items())}
         print(f"  {run:28s} {split:8s} IoU={result['splits'][split]['iou_water']:.4f} "
               f"F1={result['splits'][split]['f1_water']:.4f}", flush=True)
+    # threshold chosen on VALIDATION ONLY, then applied unchanged to test / Bolivia
+    sweep = {s: {t: summarize(m)["iou_water"] for t, m in g.items()} for s, g in cms_grid.items()}
+    best_t = max(grid, key=lambda t: (sweep["valid"][t], -abs(t - 0.5)))
+    result["threshold_sweep_iou"] = {s: {str(t): v for t, v in d.items()} for s, d in sweep.items()}
+    result["val_selected_threshold"] = best_t
+    result["splits_at_val_threshold"] = {}
+    result["per_event_at_val_threshold"] = {}
+    for split in EVAL_SPLITS:
+        result["splits_at_val_threshold"][split] = summarize(cms_grid[split][best_t])
+        if split != "valid":
+            ev = defaultdict(lambda: np.zeros((2, 2), np.int64))
+            for row in per_chip[split]:
+                lab = load_chip(row["chip"])["label"]
+                ev[row["event"]] += confusion((row["probs"] > best_t).astype(np.int8), lab)
+            result["per_event_at_val_threshold"][split] = {e: summarize(v) for e, v in sorted(ev.items())}
+    result["inference_peak_gpu_mem_mib"] = (round(torch.cuda.max_memory_allocated() / 2**20)
+                                            if pred.device.type == "cuda" else None)
+    print(f"  {run:28s} val-selected threshold {best_t}: test IoU="
+          f"{result['splits_at_val_threshold']['test']['iou_water']:.4f} bolivia IoU="
+          f"{result['splits_at_val_threshold']['bolivia']['iou_water']:.4f}", flush=True)
     result["latency"] = benchmark(pred, load_chip(splits["test"][0]["id"]))
     result["sample_chips"] = sorted(samples)
     write_json(run_dir / "evaluation.json", result)
@@ -242,6 +272,7 @@ def main() -> None:
     ap.add_argument("--baselines-only", action="store_true")
     ap.add_argument("--threshold", type=float, default=0.5)
     ap.add_argument("--tta", action="store_true")
+    ap.add_argument("--skip-baselines", action="store_true")
     a = ap.parse_args()
 
     if a.baselines_only:
@@ -254,12 +285,14 @@ def main() -> None:
                       and read_json(p / "status.json").get("state") == "completed")
     results = {r: evaluate_run(r, a.threshold, a.tta) for r in runs}
     if a.all:
-        baselines = evaluate_baselines()
+        baselines = read_json(artifacts_dir() / "baselines.json") if a.skip_baselines else evaluate_baselines()
         summary = {
-            "protocol": "best.pt chosen on valid; threshold 0.5; pooled-pixel metrics; label -1 ignored",
+            "protocol": "best.pt chosen on valid; metrics at threshold 0.5 and at the threshold selected on valid only; pooled-pixel metrics; label -1 ignored",
             "runs": {r: {"modality": v["modality"], "arch": v["config"]["model"]["arch"],
                          "encoder": v["config"]["model"]["encoder"], "epoch": v["checkpoint_epoch"],
                          "n_params": v["meta"]["n_params"], "splits": v["splits"],
+                         "val_selected_threshold": v["val_selected_threshold"],
+                         "splits_at_val_threshold": v["splits_at_val_threshold"],
                          "latency_ms": v["latency"]["model_only_ms_mean"]} for r, v in results.items()},
             "baselines": {k: {"description": v["description"], "splits": v["splits"]} for k, v in baselines.items()},
         }

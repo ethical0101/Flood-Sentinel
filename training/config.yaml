@@ -4,11 +4,18 @@ seed: 42
 run_name: null            # defaults to "<arch>_<encoder>_<modality>"
 
 data:
-  modality: s1s2          # s1 (VV,VH) | s2 (13 MSI bands) | s1s2 (15 bands) | rgb (S2 B4,B3,B2, 8-bit stretch)
+  modality: s1s2          # s1 | s2 | s1s2 | rgb | s2i | s1s2i  (i = + NDWI/MNDWI index channels)
   crop_size: 256          # random training crops; validation/test use full 512x512 chips
   crops_per_chip: 4       # random crops drawn from every training chip per epoch
   num_workers: 2          # keep low: 16 GB RAM laptop, Windows spawn-based workers
   augment: true           # flips + 90-degree rotations (+ colour jitter for rgb)
+  radiometric:            # v2: physically motivated photometric augmentation on raw values (off = v1 recipe)
+    enabled: false
+    p: 0.8
+    s2_gain: [0.75, 1.25]   # per-chip multiplicative TOA-reflectance gain
+    s2_band_jitter: 0.05    # additional +-5% per-band gain
+    s1_offset_db: 2.0       # per-chip additive SAR offset (dB)
+    s1_pol_jitter_db: 0.5   # additional per-polarisation offset (dB)
 
 model:
   arch: unet              # unet | deeplabv3plus

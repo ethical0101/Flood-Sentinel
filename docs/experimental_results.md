@@ -2,6 +2,80 @@
 
 All numbers below come from `artifacts/summary.json`, `artifacts/baselines.json`, `artifacts/runs/*/evaluation.json`, `artifacts/runs/*/history.json` and `artifacts/routing_evaluation.json`, all produced by the code in this repository on **2026-10-18**. Nothing was copied from the literature or adjusted by hand.
 
+v2 adds the following machine-readable sources:
+* `artifacts/experiments.{csv,json}` (registry)
+* `artifacts/worldfloods_evaluation.json` (external test)
+* `artifacts/v2_bootstrap.json` (paired chip bootstrap)
+* `artifacts/audit/*.json` (audit)
+
+---
+
+# Part A: v2 upgrade (controlled experiments)
+
+## A1. Verification of v1
+Every v1 checkpoint was re-run on the **raw GeoTIFFs** with independent code (`scripts/audit_reproduce.py`). All held-out IoUs reproduce to within 0.0001. See `docs/upgrade_audit.md` for the leakage findings: the test split is spatially close to training, and only Bolivia is independent inside Sen1Floods11.
+
+## A2. Protocol
+* Same data, splits, epochs (≤ 60), early stopping (patience 15), optimiser and evaluation code as v1. **One factor changes per run.**
+* Each run's decision threshold is **selected on validation only** (grid 0.10–0.90, step 0.05). Test and Bolivia are reported at that threshold, and also at 0.5 in `evaluation.json`.
+* **Pre-registered selection rule:** the v2 default would be the run with the highest validation IoU, but only if it beats v1 by more than the seed noise measured by R0b. Otherwise v1 stays the default.
+* Hardware: RTX 3050 Laptop (4 GB). Peak training memory 0.87 GB (1.15 GB for R0b, which resumed after a pause). The GPU was shared with another project, so runs paused and resumed via `--polite`. Wall-clock times include those pauses.
+
+## A3. Results (IoU of the water class, each run at its validation-selected threshold)
+| Run | Change vs v1 | Thr. | **Val IoU** (selection) | Test IoU | Bolivia IoU | Bolivia recall | Train time |
+|---|---|---|---|---|---|---|---|
+| `unet_resnet34_s1s2` (v1) | – (seed 42) | 0.40 | 0.8454 | 0.8253 | 0.7939 | 0.826 | 15.7 min |
+| `v2_r0b_unet_s1s2_seed7` | seed 7 (noise reference) | 0.45 | 0.8427 | 0.8254 | 0.7695 | 0.801 | 14.3 min |
+| `v2_r1_unet_s1s2_radiometric` | radiometric augmentation | 0.40 | **0.8479** | 0.8227 | 0.7892 | 0.841 | 19.5 min |
+| `v2_r2_unet_s1s2i_indices` | + NDWI/MNDWI channels | 0.45 | 0.8471 | 0.8259 | 0.8135 | 0.863 | 20.4 min |
+| `v2_r3_unet_s1s2i_radiometric` | both | 0.40 | 0.8449 | **0.8265** | 0.8173 | 0.862 | 20.2 min |
+| `v2_r4_unet_s2i_radiometric` | both, S2 only (no SAR) | 0.40 | 0.8360 | 0.8248 | **0.8181** | **0.885** | 19.5 min |
+| *NDWI > 0 baseline* | – | fixed | – | 0.7578 | 0.8320 | 0.888 | – |
+
+v1 models evaluated again with validation-selected thresholds (previously reported at 0.5):
+
+| Model | Thr. | Test IoU (0.5 → val thr.) | Bolivia IoU (0.5 → val thr.) |
+|---|---|---|---|
+| U-Net S1+S2 | 0.40 | 0.8233 → 0.8253 | 0.7836 → 0.7939 |
+| U-Net S2 | 0.45 | 0.8143 → 0.8159 | 0.7696 → 0.7740 |
+| U-Net S1 | 0.40 | 0.6658 → 0.6659 | 0.6154 → 0.6270 |
+| U-Net RGB | 0.40 | 0.5990 → 0.6009 | 0.5911 → 0.5920 |
+| DeepLabV3+ S1+S2 | 0.60 | 0.7921 → 0.7886 | 0.7896 → 0.7874 |
+
+## A4. Significance (paired chip bootstrap vs v1, 2,000 resamples)
+| Run | Test ΔIoU [95% CI] | Bolivia ΔIoU [95% CI] |
+|---|---|---|
+| R0b (seed 7) | +0.0001 [−0.011, +0.011] | −0.0244 [−0.102, +0.005] |
+| R1 radiometric | −0.0025 [−0.012, +0.006] | −0.0047 [−0.021, +0.013] |
+| R2 indices | +0.0006 [−0.009, +0.007] | **+0.0197 [+0.012, +0.035]** |
+| R3 indices + radiometric | +0.0013 [−0.002, +0.005] | **+0.0235 [+0.014, +0.041]** |
+| R4 S2 + indices + radiometric | −0.0004 [−0.006, +0.005] | **+0.0242 [+0.012, +0.043]** |
+
+The bootstrap resamples chips, not training seeds. Retraining the unchanged v1 recipe with another seed moved Bolivia IoU by −0.024, the same order of magnitude as the index-channel gains.
+
+## A5. External evaluation: WorldFloods v2 test split (18 scenes, never used for training or selection)
+Clear-sky valid pixels (secondary: all valid pixels). Only models that need Sentinel-2 alone can run here.
+
+| Method | Clear-sky IoU @0.5 | Clear-sky IoU @val thr. | All-valid IoU @val thr. |
+|---|---|---|---|
+| **v1 U-Net S2** (`unet_resnet34_s2`) | 0.7787 | **0.7809** (0.45) | 0.7728 |
+| v2 R4 U-Net S2 + indices + radiometric | 0.7628 | 0.7668 (0.40) | 0.7573 |
+| v1 U-Net RGB | 0.5480 | 0.5636 (0.40) | 0.5516 |
+| MNDWI > 0 | 0.7480 | – | 0.7386 |
+| NDWI > 0 | 0.5329 | – | 0.5230 |
+
+## A6. Conclusions
+1. **Model selection:** the best validation IoU (R1, 0.8479) beats v1 by only +0.0025, which is below the measured seed noise (0.0027). Under the pre-registered rule, **the v1 model remains the default.** No v2 run is a demonstrated improvement on the in-distribution test split: every test-split 95% interval spans zero.
+2. **Validation-selected thresholds** are a small, legitimate gain at no cost. The v1 main model goes from Bolivia 0.784 to 0.794 and test 0.823 to 0.825.
+3. **Generalisation, Bolivia:** every model with NDWI/MNDWI index channels (R2, R3, R4) scores 0.814–0.818 on Bolivia, against 0.770–0.794 for the two seeds of the v1 recipe. Recall rises (0.86–0.89 against 0.80–0.83), and the chip bootstrap excludes zero. Two cautions apply: the gain is comparable to seed-to-seed spread, and the hypothesis came from analysing Bolivia errors. This is **suggestive but not conclusive.** With index channels the networks now match the NDWI baseline's recall on Bolivia, but still not its IoU (0.818 against 0.832).
+4. **Generalisation, WorldFloods:** the improvement **does not replicate** on the independent external test. The v2 S2-only recipe (R4) is 0.014 IoU *worse* than the v1 S2-only model. Both learned S2 models beat both index baselines there (0.78 against MNDWI 0.75 and NDWI 0.53). The NDWI advantage seen on Bolivia is specific to that event.
+5. **Radiometric augmentation alone** (R1) changed neither test nor Bolivia beyond noise, so brightness invariance is not what limits Bolivia performance.
+6. Net: v2 delivers a more honest and better-characterised model rather than a better one. The documented effect is validation-selected thresholds. The index-channel idea is a lead that needs multi-seed confirmation and more independent events.
+
+---
+
+# Part B: v1 results (unchanged; for reference)
+
 ## Setup
 | | |
 |---|---|

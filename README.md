@@ -5,14 +5,50 @@ A locally trained deep-learning system that **maps flood water in Sentinel-1/Sen
 > **Research prototype.** Flood extents are model estimates and routes are not verified. Do not use them for real evacuation or navigation decisions; follow official emergency services and verified road-closure information.
 
 ## Results at a glance (measured, held-out data)
-| | Test split (90 chips) | Bolivia, unseen event (15 chips) |
-|---|---|---|
-| **U-Net ResNet-34, Sentinel-1+2** (default model) | **IoU 0.823**, F1 0.903 | IoU 0.784, F1 0.879 |
-| Best non-learned baseline (NDWI > 0) | IoU 0.758 | **IoU 0.832** |
-| Inference, 512×512 chip, RTX 3050 Laptop | 17 ms model-only, ≈46 ms end-to-end | |
-| Risk-aware routing (300 OD pairs, scored on hand labels) | **−19.4% labelled-flooded road per trip** for a +4.5% detour (oracle −21.4%) | |
+| | Sen1Floods11 test (90 chips) | Bolivia, unseen event (15 chips) | WorldFloods v2 test (18 scenes, external) |
+|---|---|---|---|
+| **U-Net ResNet-34, S1+S2** (default; threshold 0.40 chosen on validation) | **IoU 0.825** | IoU 0.794 | n/a (needs SAR) |
+| U-Net ResNet-34, S2 only (v1) | IoU 0.816 | IoU 0.774 | **IoU 0.781** |
+| v2: U-Net + NDWI/MNDWI channels + radiometric aug. (S1+S2 / S2) | IoU 0.827 / 0.825 | **IoU 0.817 / 0.818** | — / IoU 0.767 |
+| NDWI > 0 (non-learned) | IoU 0.758 | **IoU 0.832** | IoU 0.533 |
+| MNDWI > 0 (non-learned) | IoU 0.650 | IoU 0.551 | IoU 0.748 |
+| Inference, 512×512 chip, RTX 3050 Laptop | 17 ms model-only, ≈46 ms end-to-end | | |
+| Risk-aware routing (300 OD pairs, scored on hand labels) | **−19.4% labelled-flooded road per trip** for a +4.5% detour (oracle −21.4%) | | |
 
-The trained model beats every baseline on the test split, but **not** on the unseen Bolivia event, where a simple water index is better. See the [results](#10-results) and [docs/experimental_results.md](docs/experimental_results.md).
+**Honest summary:**
+* Learned models beat every baseline on the Sen1Floods11 test split and on the external WorldFloods set. However, the Sen1Floods11 test split is spatially close to training (see `docs/upgrade_audit.md`).
+* On the unseen Bolivia event, NDWI is still the best single method.
+* The v2 index-channel models narrow that gap (+0.02 IoU, outside the chip-bootstrap interval), but the gain is the same size as seed-to-seed noise and **does not replicate on WorldFloods**. The pre-registered selection rule therefore kept the v1 model as the default.
+
+Details: [docs/experimental_results.md](docs/experimental_results.md) (Part A: v2, Part B: v1).
+
+![Route planner](docs/screenshots/routes.png)
+
+### What's new in v2
+* **Audit:**
+  * v1 metrics re-verified from the raw data;
+  * leakage and proximity analysis;
+  * error stratification and calibration;
+  * an independent WorldFloods v2 test set (evaluation only).
+* **Controlled experiments:**
+  * a second-seed noise reference;
+  * radiometric augmentation;
+  * NDWI/MNDWI input channels;
+  * validation-only threshold selection, with a paired bootstrap for significance and an experiment registry (`artifacts/experiments.csv`).
+* **Redesigned dashboard** (`docs/ui_redesign_plan.md`), with eight pages:
+  * command overview, segmentation studio and route planner;
+  * evaluation lab, training & system monitor and dataset explorer;
+  * history & reports, and docs & diagnostics.
+* **New features:**
+  * persistent analysis history (SQLite) with CSV/JSON export and downloadable HTML reports;
+  * uncertainty maps and an NDWI comparison for every prediction;
+  * an explicit route status that never silently falls back to an unsafe route;
+  * per-route risk breakdown, GeoJSON export and offline road-name search;
+  * guarded training start/stop;
+  * GPU-courtesy mode, so training yields to other projects;
+  * diagnostics and a warnings feed.
+
+Screenshots of every page are in [`docs/screenshots/`](docs/screenshots/).
 
 ---
 
@@ -173,7 +209,7 @@ Open http://127.0.0.1:8000 for the dashboard and http://127.0.0.1:8000/docs for 
 
 ## 18. Tests
 ```powershell
-.\.venv\Scripts\python -m pytest                 # 41 backend + training tests
+.\.venv\Scripts\python -m pytest                 # 64 backend + training tests (1 conditional skip)
 cd frontend; npm test                            # unit tests (integration tests need INTEGRATION_API)
 $env:INTEGRATION_API="http://127.0.0.1:8000"; npx vitest run   # with the API running
 ```

@@ -131,6 +131,15 @@ export interface DatasetStatus {
   splits: Record<string, SplitInfo>;
   train_water_fraction: number | null;
   layers: string[];
+  channels: { name: string; sensor: string; unit: string; note: string }[];
+  label_definitions: { value: number; meaning: string; use: string }[];
+  events: { event: string; chips: Record<string, number>; lat: number; lon: number; mean_water_fraction: number; s1_date: string | null; s2_date: string | null }[];
+  storage: Record<string, number>;
+  quality_warnings: string[];
+  external: {
+    name: string; use: string; licence: string; citation: string; downloaded_utc: string; n_files: number; bytes: number;
+    n_failed: number; integrity: string; scenes: number; channels: string; labels: string;
+  } | null;
 }
 
 export interface HistoryRow {
@@ -188,6 +197,11 @@ export interface EvaluationRun {
   };
   history: HistoryRow[];
   sample_images: string[];
+  val_selected_threshold?: number;
+  splits_at_val_threshold?: Record<string, Metrics>;
+  per_event_at_val_threshold?: Record<string, Record<string, Metrics>>;
+  threshold_sweep_iou?: Record<string, Record<string, number>>;
+  inference_peak_gpu_mem_mib?: number | null;
 }
 
 export interface Baseline {
@@ -241,6 +255,11 @@ export interface SegResult {
   files: string[];
   ground_truth: { label: string; metrics: Metrics } | null;
   warnings: string[];
+  uncertainty?: { definition: string; mean: number; uncertain_pixels_fraction: number };
+  baseline?: {
+    name: string; water_fraction: number; agreement_iou_with_model: number | null; model_only_fraction: number;
+    ndwi_only_fraction: number; metrics_vs_ground_truth: Metrics | null;
+  } | null;
 }
 
 export interface Sample {
@@ -300,6 +319,10 @@ export interface Route {
   coordinates: [number, number][];
   segments: { coords: [number, number][]; risk_class: RiskClass; flooded_len_m: number; length_m: number; name: string | null; highway: string }[];
   cost?: number;
+  risk_level: string;
+  risk_level_rule: string;
+  length_by_risk_class_m: Record<string, number>;
+  flood_affected_roads: { road: string; flooded_m: number }[];
 }
 
 export interface PlanResponse {
@@ -318,6 +341,71 @@ export interface PlanResponse {
   attribution: string;
   disclaimer: string;
   travel_time_note: string;
+  id: string;
+  status: "flood_free_route_found" | "no_flood_free_route" | "no_route_avoids_closures";
+  status_note: string;
+  area_id: string;
+  area_name: string;
+  road_meta: { fetched_utc: string; source: string } | null;
+  imagery_event: string | null;
+  created: string;
+  settings: Record<string, number | boolean>;
+}
+
+export interface HistoryItem {
+  id: string;
+  kind: "segmentation" | "route";
+  created: string;
+  title: string;
+  model: string | null;
+  source: string | null;
+  summary: Record<string, number | string | boolean | null>;
+  metrics: Metrics | null;
+  settings: Record<string, unknown> | null;
+  app_version: string;
+  available: boolean;
+  detail?: SegResult | PlanResponse | null;
+}
+
+export interface Experiment {
+  experiment_id: string; generation: string; change_vs_v1: string; state: string | null; architecture: string;
+  input_modality: string; input_channels: number; train_resolution: string; loss: string; optimizer: string;
+  batch_size: number; seed: number; epochs_run: number; epochs_max: number; training_time_s: number | null;
+  best_epoch: number | null; "best_val_iou@0.5": number | null; val_selected_threshold: number | null;
+  "val_iou@val_thr": number | null; "test_iou@0.5": number | null; "test_iou@val_thr": number | null;
+  "bolivia_iou@0.5": number | null; "bolivia_iou@val_thr": number | null; "bolivia_recall@val_thr": number | null;
+  peak_train_gpu_mem_mib: number | null; peak_infer_gpu_mem_mib: number | null; latency_ms_model_only: number | null;
+  checkpoint: string | null; evaluated: boolean; radiometric_aug: boolean; pretrained: string | null; dataset: string; split: string;
+}
+
+export interface DiagCheck { check: string; status: "ok" | "warn" | "fail"; detail: string; category: string; hint: string | null }
+export interface Diagnostics {
+  checked_at: string; duration_ms: number; summary: { ok: number; warn: number; fail: number }; checks: DiagCheck[];
+  versions: Record<string, string | null>; offline: { works_offline: string[]; needs_network: string[] };
+}
+export interface Warning { severity: "critical" | "warning" | "info"; source: string; message: string; observed: string }
+
+export interface Preflight { ok: boolean; checks: { check: string; ok: boolean; detail: string }[]; active: { run: string; pid: number; epoch: number; epochs: number }[] }
+
+export interface WorldFloodsEval {
+  dataset: string; label_mapping: string; models: Record<string, { val_selected_threshold: number }>;
+  totals: Record<string, { clear: Metrics; all: Metrics }>;
+  per_scene_iou_water: Record<string, Record<string, unknown>>;
+}
+export interface ExternalEval {
+  worldfloods: WorldFloodsEval | null;
+  bootstrap: { method: string; baseline: string; splits: Record<string, { n_chips: number; comparisons: Record<string, { delta_iou: number; ci95: [number, number]; p_delta_le_0: number }> }> } | null;
+  audit: {
+    splits: Record<string, number>; chip_id_duplicates_across_splits: number; bolivia_in_train_or_valid: number;
+    geographic_proximity_to_train: Record<string, { median_km_to_nearest_train_chip: number; min_km: number; share_within_10km: number; chips_whose_footprint_overlaps_a_train_chip: number }>;
+    reproduction_iou_water: Record<string, Record<string, unknown> | string>;
+  } | null;
+  weakness_analysis: {
+    valid_selected_threshold: number;
+    fn_rate_by_stratum: Record<string, Record<string, { fn_rate: number; water_px: number }>>;
+    ece: Record<string, number>;
+    reliability: Record<string, { bin: string; n: number; mean_p: number | null; water_rate: number | null }[]>;
+  } | null;
 }
 
 export interface PlanRequest {
@@ -374,6 +462,25 @@ export const api = {
         (q.model ? `&model=${encodeURIComponent(q.model)}` : ""),
     ),
   plan: (body: PlanRequest) => post<PlanResponse>("/api/routes/plan", body),
+  routeResult: (id: string) => request<PlanResponse>(`/api/routes/results/${id}`),
+  searchArea: (id: string, q: string) =>
+    request<{ results: { name: string; lat: number; lon: number; segments: number }[]; source: string }>(
+      `/api/routes/areas/${encodeURIComponent(id)}/search?q=${encodeURIComponent(q)}`),
+  history: (q: { kind?: string; q?: string; limit?: number; offset?: number } = {}) => {
+    const p = new URLSearchParams();
+    Object.entries(q).forEach(([k, v]) => v != null && v !== "" && p.set(k, String(v)));
+    return request<{ total: number; items: HistoryItem[] }>(`/api/history?${p}`);
+  },
+  historyItem: (id: string) => request<HistoryItem>(`/api/history/${id}`),
+  experiments: () => request<{ experiments: Experiment[] }>("/api/experiments"),
+  external: () => request<ExternalEval>("/api/evaluation/external"),
+  diagnostics: () => request<Diagnostics>("/api/diagnostics"),
+  warnings: () => request<{ warnings: Warning[] }>("/api/warnings"),
+  version: () => request<Record<string, string | null>>("/api/version"),
+  formats: () => request<{ max_upload_mb: number; max_pixels: number; min_side_px: number; formats: { format: string; interpretation: string; models: string[]; georeferenced: string }[]; notes: string[] }>("/api/segmentation/formats"),
+  presets: () => request<{ presets: { run: string; overrides: string[]; state: string }[]; preflight: Preflight }>("/api/training/presets"),
+  startTraining: (run: string, confirm: string) => post<{ started: boolean; pid: number; command: string; resume: boolean }>("/api/training/start", { run, confirm }),
+  stopTraining: (run: string) => post<{ stop_requested: boolean; note: string }>("/api/training/stop", { run, confirm: run }),
 };
 
 export const resultFile = (id: string, name: string, download = false) =>
@@ -383,4 +490,7 @@ export const runImage = (run: string, name: string) =>
 export const overlayUrl = (id: string, source: string, threshold: number, model?: string) =>
   `/api/routes/areas/${encodeURIComponent(id)}/overlay.png?source=${source}&threshold=${threshold}` +
   (model ? `&model=${encodeURIComponent(model)}` : "");
+export const reportUrl = (id: string) => `/api/reports/${id}`;
+export const routeExportUrl = (id: string, format: "json" | "geojson" | "html") => `/api/routes/results/${id}/export?format=${format}`;
+export const historyExportUrl = (format: "csv" | "json", kind?: string) => `/api/history/export?format=${format}${kind ? `&kind=${kind}` : ""}`;
 export const imageryUrl = (id: string) => `/api/routes/areas/${encodeURIComponent(id)}/imagery.png`;

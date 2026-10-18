@@ -91,6 +91,8 @@ def describe(G, H: nx.DiGraph, path: list[int]) -> dict:
     dist = tt = flooded = unknown = 0.0
     max_p = 0.0
     n_flooded = 0
+    by_class: dict[str, float] = {}
+    affected: dict[str, float] = {}
     for u, v in zip(path[:-1], path[1:]):
         d = G.edges[u, v, H[u][v]["key"]]
         L = float(d.get("length", 0.0))
@@ -109,10 +111,24 @@ def describe(G, H: nx.DiGraph, path: list[int]) -> dict:
         if pm is not None and not math.isnan(pm):
             max_p = max(max_p, pm)
         n_flooded += d.get("risk_class") in ("flooded", "partial")
+        rc = d.get("risk_class") or "unknown"
+        by_class[rc] = by_class.get(rc, 0.0) + L
+        if d.get("flooded_len_m", 0.0) > 0:
+            key = _name(d) or f"unnamed {_first(d.get('highway')) or 'road'}"
+            affected[key] = affected.get(key, 0.0) + d.get("flooded_len_m", 0.0)
         segments.append({"coords": [[round(a, 6), round(b, 6)] for a, b in pts], "risk_class": d.get("risk_class"),
                          "flooded_len_m": round(d.get("flooded_len_m", 0.0), 1), "length_m": round(L, 1),
                          "name": _name(d), "highway": _first(d.get("highway"))})
-    return {"distance_m": round(dist, 1),
+    share = flooded / dist if dist else 0.0
+    unknown_share = unknown / dist if dist else 0.0
+    level = ("no predicted flooding" if flooded == 0 and unknown_share < 0.1 else
+             "minor predicted flooding" if share < 0.05 else "substantial predicted flooding")
+    return {"risk_level": level,
+            "risk_level_rule": "none: 0 m flooded and <10% unknown; minor: <5% of length flooded; substantial: otherwise",
+            "length_by_risk_class_m": {k: round(v, 1) for k, v in sorted(by_class.items())},
+            "flood_affected_roads": [{"road": k, "flooded_m": round(v, 1)}
+                                     for k, v in sorted(affected.items(), key=lambda kv: -kv[1])[:12]],
+            "distance_m": round(dist, 1),
             "travel_time_s": None if math.isnan(tt) else round(tt, 1),
             "flooded_length_m": round(flooded, 1),
             "flooded_share": round(flooded / dist, 4) if dist else 0.0,
@@ -198,7 +214,22 @@ def plan(G, start: tuple[float, float], end: tuple[float, float], s: RiskSetting
             a["cost"] = round(nx.path_weight(risk_g, p, "w"), 1)
             alts.append(a)
 
-    return {"start_snap_m": round(od, 1), "destination_snap_m": round(td, 1),
+    if fallback:
+        status = "no_route_avoids_closures"
+    elif risk["flooded_length_m"] > 0:
+        status = "no_flood_free_route"
+    else:
+        status = "flood_free_route_found"
+    return {"status": status,
+            "status_note": {
+                "flood_free_route_found": "The risk-aware route crosses no road predicted as flooded. This is NOT a "
+                                          "guarantee of safety.",
+                "no_flood_free_route": "Every route between these points crosses road predicted as flooded; the "
+                                       "risk-aware route minimises it but is not flood-free.",
+                "no_route_avoids_closures": "No route avoids all segments marked impassable; the route shown relaxes "
+                                            "closures to penalties and must be treated as unsafe.",
+            }[status],
+            "start_snap_m": round(od, 1), "destination_snap_m": round(td, 1),
             "baseline": baseline, "risk_aware": risk, "alternatives": alts,
             "same_as_baseline": base_path == risk_path, "closure_fallback": fallback,
             "closed_edges": closed, "settings": asdict(s), "warnings": warnings,

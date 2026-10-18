@@ -20,6 +20,10 @@ artifacts/**/*.pt
 artifacts/**/*.pth
 outputs/uploads/
 outputs/predictions/
+outputs/routes/
+outputs/*.sqlite
+artifacts/runs/*/STOP
+artifacts/runs/*/train.lock
 *.part
 *.corrupt-*
 *.log
@@ -34,3 +38,4 @@ frontend/.vite/
 Thumbs.db
 .vscode/
 .idea/
+frontend/*.tsbuildinfo

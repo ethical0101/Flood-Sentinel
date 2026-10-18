@@ -116,7 +116,81 @@ def datasets() -> dict:
         "splits": splits,
         "train_water_fraction": stats and stats.get("train_pos_fraction"),
         "layers": ["S1Hand (VV,VH dB)", "S2Hand (13 bands)", "LabelHand", "S1OtsuLabelHand", "JRCWaterHand"],
+        "channels": [
+            {"name": "VV", "sensor": "Sentinel-1 GRD", "unit": "dB", "note": "clipped to [-50, 10] before standardisation"},
+            {"name": "VH", "sensor": "Sentinel-1 GRD", "unit": "dB", "note": "clipped to [-50, 10] before standardisation"},
+            *[{"name": b, "sensor": "Sentinel-2 L1C", "unit": "TOA reflectance x10000",
+               "note": "divided by 10000, standardised with train statistics"}
+              for b in ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B8A", "B9", "B10", "B11", "B12"]],
+            {"name": "NDWI", "sensor": "derived (v2 '*i' models)", "unit": "ratio [-1, 1]", "note": "(B3-B8)/(B3+B8)"},
+            {"name": "MNDWI", "sensor": "derived (v2 '*i' models)", "unit": "ratio [-1, 1]", "note": "(B3-B11)/(B3+B11)"}],
+        "label_definitions": [{"value": -1, "meaning": "no data / not labelled", "use": "ignored in loss and metrics"},
+                              {"value": 0, "meaning": "not water", "use": "negative class"},
+                              {"value": 1, "meaning": "water (flood and permanent)", "use": "positive class"}],
+        "events": _events(index),
+        "storage": {"raw_sen1floods11": dir_size_cached(raw), "processed_chips": dir_size_cached(settings.processed),
+                    "raw_worldfloods_test": dir_size_cached(settings.raw / "worldfloods_v2"),
+                    "osm_cache": dir_size_cached(settings.raw.parent / "osm_cache"),
+                    "checkpoints": sum(dir_size_cached(d / "checkpoints") for d in (settings.artifacts / "runs").iterdir())
+                    if (settings.artifacts / "runs").exists() else 0,
+                    "analysis_outputs": dir_size_cached(settings.outputs)},
+        "quality_warnings": _quality_warnings(),
+        "external": _worldfloods(),
     }
+
+
+def _events(index: dict | None) -> list[dict]:
+    if not index:
+        return []
+    meta = _read(settings.raw / "sen1floods11" / "v1.1" / "Sen1Floods11_Metadata.geojson") or {"features": []}
+    by_loc = {f["properties"].get("location"): f["properties"] for f in meta["features"]}
+    ev: dict[str, dict] = {}
+    for c in index["chips"]:
+        e = ev.setdefault(c["event"], {"event": c["event"], "chips": {}, "lat": [], "lon": [], "water": []})
+        e["chips"][c["split"]] = e["chips"].get(c["split"], 0) + 1
+        l, b, r, t = c["bounds"]
+        e["lat"].append((b + t) / 2)
+        e["lon"].append((l + r) / 2)
+        e["water"].append(c["water_fraction"])
+    out = []
+    for name, e in sorted(ev.items()):
+        p = by_loc.get(name) or by_loc.get(name.replace("Mekong", "Cambodia")) or {}
+        out.append({"event": name, "chips": e["chips"], "lat": round(sum(e["lat"]) / len(e["lat"]), 3),
+                    "lon": round(sum(e["lon"]) / len(e["lon"]), 3), "mean_water_fraction": round(sum(e["water"]) / len(e["water"]), 4),
+                    "s1_date": p.get("s1_date"), "s2_date": p.get("s2_date")})
+    return out
+
+
+def _quality_warnings() -> list[str]:
+    out = []
+    a = _read(settings.artifacts / "audit" / "reproduction.json")
+    if a:
+        t = a["geographic_proximity_to_train"]["test"]
+        out.append(f"Test split is spatially close to training: {t['share_within_10km'] * 100:.0f}% of test chips lie "
+                   f"within 10 km of a training chip and {t['chips_whose_footprint_overlaps_a_train_chip']} overlap one.")
+    w = _read(settings.artifacts / "audit" / "weakness_analysis.json")
+    if w:
+        b = w["data"]["bolivia"]
+        out.append(f"Bolivia has {b['label_share']['invalid'] * 100:.0f}% unlabelled pixels, "
+                   f"{b['s1_nan_pixel_share'] * 100:.0f}% Sentinel-1 no-data and "
+                   f"{b['s2_nodata_pixel_share'] * 100:.0f}% Sentinel-2 no-data (training: about 2%).")
+        out.append(f"Normalisation statistics include {w['data']['stats_contamination']['train_s2_nodata_pixel_share'] * 100:.1f}% "
+                   "Sentinel-2 no-data pixels (minor; unchanged for comparability).")
+    out.append("Labels mark all surface water (flood + permanent); they do not separate flood water.")
+    return out
+
+
+def _worldfloods() -> dict | None:
+    m = _read(settings.raw / "worldfloods_v2" / "manifest.json")
+    if not m:
+        return None
+    return {"name": "WorldFloods v2 - test split only", "use": "external evaluation only (never training or selection)",
+            "licence": m.get("licence"), "citation": m.get("citation"), "downloaded_utc": m.get("downloaded_utc"),
+            "n_files": m.get("n_files"), "bytes": m.get("total_bytes"), "n_failed": m.get("n_failed"),
+            "integrity": "SHA-256 of every LFS file verified at download",
+            "scenes": len([k for k in m.get("files", {}) if k.startswith("test/S2/")]),
+            "channels": "Sentinel-2 L1C, 13 bands (+ QA60 and cloud probability, unused); no Sentinel-1",
+            "labels": "water band: 0 invalid, 1 land, 2 water; cloud band: 0 invalid, 1 clear, 2 cloud"}
 
 
 def training() -> dict:

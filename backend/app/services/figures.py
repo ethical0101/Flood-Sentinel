@@ -34,3 +34,13 @@ def flood_rgba(prob: np.ndarray, threshold: float = 0.5) -> np.ndarray:
     rgba[..., 0], rgba[..., 1], rgba[..., 2] = 29, 78, 216
     rgba[..., 3] = np.where(wet, 110 + 120 * p, np.where(p >= 0.25, 50 * p, 0)).astype(np.uint8)
     return rgba
+
+
+def agreement_rgb(model: np.ndarray, baseline: np.ndarray) -> np.ndarray:
+    """Model vs baseline masks: both water = blue, model only = cyan, baseline only = amber."""
+    img = np.empty(model.shape + (3,), np.uint8)
+    img[:] = NOT_WATER
+    img[model & baseline] = WATER
+    img[model & ~baseline] = (6, 182, 212)
+    img[~model & baseline] = (245, 158, 11)
+    return img

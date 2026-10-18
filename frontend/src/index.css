@@ -1,20 +1,36 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+/* Design tokens: see docs/ui_redesign_plan.md */
 @theme {
   --font-sans: "Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-mono: "Cascadia Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
 
-  --color-ink-950: #07111f;
-  --color-ink-900: #0b1b33;
-  --color-ink-800: #12284a;
-  --color-ink-700: #1c3a66;
+  --color-nav: #0b1220;
+  --color-nav-2: #111a2e;
+  --color-nav-3: #1b2740;
+  --color-canvas: #f4f6f9;
+  --color-panel: #ffffff;
+  --color-line: #e3e8ef;
+  --color-line-2: #eef1f5;
+  --color-ink: #0f172a;
+  --color-ink-2: #475569;
+  --color-ink-3: #8a97ab;
 
-  --color-water-50: #eff6ff;
-  --color-water-100: #dbeafe;
-  --color-water-500: #3b82f6;
-  --color-water-600: #2563eb;
-  --color-water-700: #1d4ed8;
+  --color-accent: #0e7490;
+  --color-accent-2: #0891b2;
+  --color-accent-soft: #e6f4f7;
+  --color-water: #2563eb;
+  --color-water-soft: #e8efff;
+  --color-truth: #7c3aed;
+  --color-truth-soft: #f1ebfe;
+  --color-ok: #15803d;
+  --color-ok-soft: #e8f5ec;
+  --color-warn: #b45309;
+  --color-warn-soft: #fdf3e3;
+  --color-bad: #b91c1c;
+  --color-bad-soft: #fdecec;
+  --color-unknown: #94a3b8;
 
   --color-risk-clear: #16a34a;
   --color-risk-low: #84cc16;
@@ -22,39 +38,38 @@
   --color-risk-flooded: #dc2626;
   --color-risk-unknown: #94a3b8;
 
-  --animate-fade-in: fade-in 0.35s ease-out both;
-  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-fade: fade 160ms ease-out both;
+  --animate-shimmer: shimmer 1.4s linear infinite;
+  --animate-slide: slide 180ms ease-out both;
 }
 
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes shimmer {
-  from { background-position: -400px 0; }
-  to { background-position: 400px 0; }
-}
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slide { from { transform: translateX(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes shimmer { from { background-position: -400px 0; } to { background-position: 400px 0; } }
 
 html, body, #root { height: 100%; }
 body {
-  @apply bg-slate-50 text-slate-800 antialiased;
-  font-feature-settings: "cv11", "ss01", "tnum";
+  @apply bg-canvas text-ink antialiased;
+  font-size: 13px;
+  font-feature-settings: "cv11", "ss01";
 }
+.tnum { font-variant-numeric: tabular-nums; }
 
 .skeleton {
-  background: linear-gradient(90deg, #eef2f7 0, #e2e8f0 40%, #eef2f7 80%);
+  background: linear-gradient(90deg, #eef1f5 0, #e3e8ef 40%, #eef1f5 80%);
   background-size: 800px 100%;
-  @apply animate-shimmer rounded-md;
+  @apply animate-shimmer rounded;
 }
 
-.leaflet-container { font-family: var(--font-sans); background: #e5e9f0; }
+.leaflet-container { font-family: var(--font-sans); background: #dfe5ec; }
 .leaflet-control-attribution { font-size: 10px; }
+.leaflet-tooltip { font-size: 11px; }
 
-/* thin custom scrollbar for log panes */
 .scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
-.scroll-thin::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: #c4cdd8; border-radius: 8px; }
+.scroll-dark::-webkit-scrollbar-thumb { background: #334155; }
 
-:focus-visible { outline: 2px solid var(--color-water-500); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--color-accent-2); outline-offset: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

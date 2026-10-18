@@ -59,6 +59,19 @@ Then open http://127.0.0.1:8000 for the dashboard, or http://127.0.0.1:8000/docs
 cd frontend; npm run dev        # http://127.0.0.1:5173, proxies /api to :8000
 ```
 
+## 5b. v2 upgrade workflow (audit, external data, controlled experiments)
+```powershell
+.\.venv\Scripts\python scripts\audit_reproduce.py          # re-verify v1 metrics from raw GeoTIFFs + leakage checks
+.\.venv\Scripts\python scripts\analyze_weaknesses.py       # error strata, threshold sweep, calibration, input shift
+.\.venv\Scripts\python scripts\download_worldfloods_test.py   # 3.1 GB, external evaluation only (CC BY-NC 4.0)
+.\.venv\Scripts\python scripts\run_experiments.py --suite v2 --polite   # R0b..R4, yields to other GPU jobs
+.\.venv\Scripts\python scripts\post_training.py            # evaluate --all, WorldFloods, registry (waits for idle GPU)
+.\.venv\Scripts\python -m training.registry                # artifacts\experiments.csv / .json
+```
+**GPU courtesy (`--polite`):** the suite starts a run only after no other project's Python process has used the GPU for 5 minutes. If one appears mid-run, training saves its checkpoint at the end of the epoch, exits with code 75 (state `paused`), and resumes automatically later. The dashboard's **Start training** button uses the same mode. It refuses to start while another job holds the GPU, while a run is active, or when there is less than 1.5 GB of free VRAM or 5 GB of free disk.
+
+**Analysis history** is stored in `outputs\history.sqlite` (override with `FLOOD_DB_PATH`). It holds metadata and file references only.
+
 ## 6. Tests
 ```powershell
 .\.venv\Scripts\python -m pytest            # backend + training (integration tests skip if data/models absent)

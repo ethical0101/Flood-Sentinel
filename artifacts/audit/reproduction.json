@@ -1,0 +1,77 @@
+{
+  "splits": {
+    "train": 252,
+    "valid": 89,
+    "test": 90,
+    "bolivia": 15
+  },
+  "chip_id_duplicates_across_splits": 0,
+  "bolivia_in_train_or_valid": 0,
+  "identical_s2_content_groups": [],
+  "geographic_proximity_to_train": {
+    "valid": {
+      "median_km_to_nearest_train_chip": 11.23,
+      "min_km": 4.02,
+      "share_within_10km": 0.36,
+      "chips_whose_footprint_overlaps_a_train_chip": 3
+    },
+    "test": {
+      "median_km_to_nearest_train_chip": 10.23,
+      "min_km": 3.99,
+      "share_within_10km": 0.422,
+      "chips_whose_footprint_overlaps_a_train_chip": 4
+    },
+    "bolivia": {
+      "median_km_to_nearest_train_chip": 1341.14,
+      "min_km": 1215.7,
+      "share_within_10km": 0.0,
+      "chips_whose_footprint_overlaps_a_train_chip": 0
+    }
+  },
+  "reproduction_iou_water": {
+    "unet_resnet34_s1s2": {
+      "test": 0.8233,
+      "bolivia": 0.7835,
+      "reported": {
+        "test": 0.8233,
+        "bolivia": 0.7836
+      }
+    },
+    "unet_resnet34_s2": {
+      "test": 0.8143,
+      "bolivia": 0.7696,
+      "reported": {
+        "test": 0.8143,
+        "bolivia": 0.7696
+      }
+    },
+    "unet_resnet34_s1": {
+      "test": 0.6658,
+      "bolivia": 0.6155,
+      "reported": {
+        "test": 0.6658,
+        "bolivia": 0.6154
+      }
+    },
+    "unet_resnet34_rgb": {
+      "test": 0.599,
+      "bolivia": 0.5911,
+      "reported": {
+        "test": 0.599,
+        "bolivia": 0.5911
+      }
+    },
+    "deeplabv3plus_mnv3l_s1s2": {
+      "test": 0.7921,
+      "bolivia": 0.7896,
+      "reported": {
+        "test": 0.7921,
+        "bolivia": 0.7896
+      }
+    },
+    "ndwi_gt0": {
+      "test": 0.7578,
+      "bolivia": 0.832
+    }
+  }
+}

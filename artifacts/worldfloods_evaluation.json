@@ -1,0 +1,1157 @@
+{
+  "dataset": "WorldFloods v2 test split (18 scenes, CC BY-NC 4.0)",
+  "label_mapping": "water band: 2->water(1), 1->land(0), 0->ignored; primary = clear-sky valid pixels",
+  "models": {
+    "unet_resnet34_rgb": {
+      "val_selected_threshold": 0.4
+    },
+    "unet_resnet34_s2": {
+      "val_selected_threshold": 0.45
+    },
+    "v2_r4_unet_s2i_radiometric": {
+      "val_selected_threshold": 0.4
+    }
+  },
+  "totals": {
+    "unet_resnet34_rgb@0.5": {
+      "clear": {
+        "iou_water": 0.5479842343667813,
+        "iou_not_water": 0.8186960474450595,
+        "miou": 0.6833401409059204,
+        "dice_water": 0.7079971774918494,
+        "f1_water": 0.7079971774918494,
+        "precision_water": 0.8908032006152524,
+        "recall_water": 0.5874447962919419,
+        "pixel_accuracy": 0.8513654705787275,
+        "omission_error": 0.4125552037080581,
+        "commission_error": 0.10919679938474754,
+        "valid_pixels": 159417459,
+        "water_fraction_gt": 0.3067376829786253,
+        "confusion_matrix": [
+          [
+            106996856,
+            3521261
+          ],
+          [
+            20173678,
+            28725664
+          ]
+        ]
+      },
+      "all": {
+        "iou_water": 0.5361465321154412,
+        "iou_not_water": 0.8165310968938281,
+        "miou": 0.6763388145046346,
+        "dice_water": 0.6980408716310533,
+        "f1_water": 0.6980408716310534,
+        "precision_water": 0.8891524575368193,
+        "recall_water": 0.5745491208741523,
+        "pixel_accuracy": 0.8486309011028308,
+        "omission_error": 0.42545087912584767,
+        "commission_error": 0.11084754246318074,
+        "valid_pixels": 167122003,
+        "water_fraction_gt": 0.3045178497531531,
+        "confusion_matrix": [
+          [
+            112585153,
+            3645217
+          ],
+          [
+            21651890,
+            29239743
+          ]
+        ]
+      }
+    },
+    "unet_resnet34_s2@0.5": {
+      "clear": {
+        "iou_water": 0.7786571879719051,
+        "iou_not_water": 0.904441557303629,
+        "miou": 0.841549372637767,
+        "dice_water": 0.8755562266158333,
+        "f1_water": 0.8755562266158333,
+        "precision_water": 0.9389164734896652,
+        "recall_water": 0.820206783150579,
+        "pixel_accuracy": 0.9284829461495808,
+        "omission_error": 0.179793216849421,
+        "commission_error": 0.06108352651033483,
+        "valid_pixels": 159417459,
+        "water_fraction_gt": 0.3067376829786253,
+        "confusion_matrix": [
+          [
+            107908820,
+            2609297
+          ],
+          [
+            8791770,
+            40107572
+          ]
+        ]
+      },
+      "all": {
+        "iou_water": 0.7702816957300556,
+        "iou_not_water": 0.9022132678890776,
+        "miou": 0.8362474818095667,
+        "dice_water": 0.8702362992149622,
+        "f1_water": 0.8702362992149622,
+        "precision_water": 0.9389660455904866,
+        "recall_water": 0.810881957747357,
+        "pixel_accuracy": 0.9263595530266592,
+        "omission_error": 0.18911804225264298,
+        "commission_error": 0.06103395440951346,
+        "valid_pixels": 167122003,
+        "water_fraction_gt": 0.3045178497531531,
+        "confusion_matrix": [
+          [
+            113547957,
+            2682413
+          ],
+          [
+            9624526,
+            41267107
+          ]
+        ]
+      }
+    },
+    "v2_r4_unet_s2i_radiometric@0.5": {
+      "clear": {
+        "iou_water": 0.7628497011987787,
+        "iou_not_water": 0.8993950234847413,
+        "miou": 0.8311223623417601,
+        "dice_water": 0.8654733306872653,
+        "f1_water": 0.8654733306872653,
+        "precision_water": 0.9466986409597651,
+        "recall_water": 0.7970846724276985,
+        "pixel_accuracy": 0.9239925283215059,
+        "omission_error": 0.2029153275723015,
+        "commission_error": 0.05330135904023491,
+        "valid_pixels": 159417459,
+        "water_fraction_gt": 0.3067376829786253,
+        "confusion_matrix": [
+          [
+            108323625,
+            2194492
+          ],
+          [
+            9922426,
+            38976916
+          ]
+        ]
+      },
+      "all": {
+        "iou_water": 0.7527194095984395,
+        "iou_not_water": 0.8966133335804544,
+        "miou": 0.8246663715894469,
+        "dice_water": 0.8589160426663991,
+        "f1_water": 0.8589160426663991,
+        "precision_water": 0.9466310476271156,
+        "recall_water": 0.7860779197240536,
+        "pixel_accuracy": 0.9213614918198414,
+        "omission_error": 0.21392208027594634,
+        "commission_error": 0.05336895237288444,
+        "valid_pixels": 167122003,
+        "water_fraction_gt": 0.3045178497531531,
+        "confusion_matrix": [
+          [
+            113974989,
+            2255381
+          ],
+          [
+            10886844,
+            40004789
+          ]
+        ]
+      }
+    },
+    "unet_resnet34_rgb@val0.4": {
+      "clear": {
+        "iou_water": 0.563598823617689,
+        "iou_not_water": 0.822006179229693,
+        "miou": 0.6928025014236909,
+        "dice_water": 0.7208995237201495,
+        "f1_water": 0.7208995237201495,
+        "precision_water": 0.8824578539863404,
+        "recall_water": 0.6093425142612349,
+        "pixel_accuracy": 0.8552747036320533,
+        "omission_error": 0.39065748573876513,
+        "commission_error": 0.11754214601365964,
+        "valid_pixels": 159417459,
+        "water_fraction_gt": 0.3067376829786253,
+        "confusion_matrix": [
+          [
+            106549272,
+            3968845
+          ],
+          [
+            19102894,
+            29796448
+          ]
+        ]
+      },
+      "all": {
+        "iou_water": 0.5516487522516126,
+        "iou_not_water": 0.8197193301140605,
+        "miou": 0.6856840411828365,
+        "dice_water": 0.7110484914206385,
+        "f1_water": 0.7110484914206384,
+        "precision_water": 0.8807533078771603,
+        "recall_water": 0.5961763695026253,
+        "pixel_accuracy": 0.8524486270069418,
+        "omission_error": 0.4038236304973747,
+        "commission_error": 0.11924669212283964,
+        "valid_pixels": 167122003,
+        "water_fraction_gt": 0.3045178497531531,
+        "confusion_matrix": [
+          [
+            112122533,
+            4107837
+          ],
+          [
+            20551244,
+            30340389
+          ]
+        ]
+      }
+    },
+    "unet_resnet34_s2@val0.45": {
+      "clear": {
+        "iou_water": 0.7809416051538702,
+        "iou_not_water": 0.9051951287365918,
+        "miou": 0.843068366945231,
+        "dice_water": 0.8769985527811825,
+        "f1_water": 0.8769985527811827,
+        "precision_water": 0.9379080299267111,
+        "recall_water": 0.8235177888487742,
+        "pixel_accuracy": 0.9291432126013249,
+        "omission_error": 0.17648221115122573,
+        "commission_error": 0.0620919700732889,
+        "valid_pixels": 159417459,
+        "water_fraction_gt": 0.3067376829786253,
+        "confusion_matrix": [
+          [
+            107852172,
+            2665945
+          ],
+          [
+            8629864,
+            40269478
+          ]
+        ]
+      },
+      "all": {
+        "iou_water": 0.7728224334006182,
+        "iou_not_water": 0.9030456302412001,
+        "miou": 0.8379340318209092,
+        "dice_water": 0.8718554310238442,
+        "f1_water": 0.8718554310238442,
+        "precision_water": 0.9379407576785282,
+        "recall_water": 0.8144696201829483,
+        "pixel_accuracy": 0.9270923051347105,
+        "omission_error": 0.18553037981705164,
+        "commission_error": 0.062059242321471704,
+        "valid_pixels": 167122003,
+        "water_fraction_gt": 0.3045178497531531,
+        "confusion_matrix": [
+          [
+            113487834,
+            2742536
+          ],
+          [
+            9441944,
+            41449689
+          ]
+        ]
+      }
+    },
+    "v2_r4_unet_s2i_radiometric@val0.4": {
+      "clear": {
+        "iou_water": 0.766809420745603,
+        "iou_not_water": 0.9006570058697617,
+        "miou": 0.8337332133076824,
+        "dice_water": 0.8680159973586798,
+        "f1_water": 0.86801599735868,
+        "precision_water": 0.9448281110881996,
+        "recall_water": 0.8027541352192429,
+        "pixel_accuracy": 0.9251187224104481,
+        "omission_error": 0.19724586478075717,
+        "commission_error": 0.05517188891180039,
+        "valid_pixels": 159417459,
+        "water_fraction_gt": 0.3067376829786253,
+        "confusion_matrix": [
+          [
+            108225927,
+            2292190
+          ],
+          [
+            9645193,
+            39254149
+          ]
+        ]
+      },
+      "all": {
+        "iou_water": 0.7573340580069781,
+        "iou_not_water": 0.8980760457224405,
+        "miou": 0.8277050518647093,
+        "dice_water": 0.8619124571749134,
+        "f1_water": 0.8619124571749133,
+        "precision_water": 0.9446600355384899,
+        "recall_water": 0.7924938859792532,
+        "pixel_accuracy": 0.9226732041980134,
+        "omission_error": 0.20750611402074678,
+        "commission_error": 0.05533996446151018,
+        "valid_pixels": 167122003,
+        "water_fraction_gt": 0.3045178497531531,
+        "confusion_matrix": [
+          [
+            113867686,
+            2362684
+          ],
+          [
+            10560325,
+            40331308
+          ]
+        ]
+      }
+    },
+    "ndwi_gt0": {
+      "clear": {
+        "iou_water": 0.5328981967758094,
+        "iou_not_water": 0.8244382117433335,
+        "miou": 0.6786682042595715,
+        "dice_water": 0.6952819148677585,
+        "f1_water": 0.6952819148677584,
+        "precision_water": 0.9630778364055915,
+        "recall_water": 0.5440124122733594,
+        "pixel_accuracy": 0.8537340505471236,
+        "omission_error": 0.45598758772664055,
+        "commission_error": 0.03692216359440848,
+        "valid_pixels": 159417459,
+        "water_fraction_gt": 0.3067376829786253,
+        "confusion_matrix": [
+          [
+            109498264,
+            1019853
+          ],
+          [
+            22297493,
+            26601849
+          ]
+        ]
+      },
+      "all": {
+        "iou_water": 0.5229721191020372,
+        "iou_not_water": 0.8230223926559839,
+        "miou": 0.6729972558790105,
+        "dice_water": 0.686778323178218,
+        "f1_water": 0.6867783231782181,
+        "precision_water": 0.9632649592319226,
+        "recall_water": 0.5336145531034542,
+        "pixel_accuracy": 0.8517803966243751,
+        "omission_error": 0.4663854468965458,
+        "commission_error": 0.03673504076807747,
+        "valid_pixels": 167122003,
+        "water_fraction_gt": 0.3045178497531531,
+        "confusion_matrix": [
+          [
+            115194730,
+            1035640
+          ],
+          [
+            23735117,
+            27156516
+          ]
+        ]
+      }
+    },
+    "mndwi_gt0": {
+      "clear": {
+        "iou_water": 0.7480435005192642,
+        "iou_not_water": 0.8801381950458794,
+        "miou": 0.8140908477825718,
+        "dice_water": 0.855863713113609,
+        "f1_water": 0.8558637131136091,
+        "precision_water": 0.8560712277921838,
+        "recall_water": 0.8556562990152301,
+        "pixel_accuracy": 0.9115973677638407,
+        "omission_error": 0.1443437009847699,
+        "commission_error": 0.14392877220781616,
+        "valid_pixels": 159417459,
+        "water_fraction_gt": 0.3067376829786253,
+        "confusion_matrix": [
+          [
+            103483506,
+            7034611
+          ],
+          [
+            7058312,
+            41841030
+          ]
+        ]
+      },
+      "all": {
+        "iou_water": 0.7385552717325686,
+        "iou_not_water": 0.8761054927020171,
+        "miou": 0.8073303822172928,
+        "dice_water": 0.8496195476104208,
+        "f1_water": 0.8496195476104209,
+        "precision_water": 0.8478886460723039,
+        "recall_water": 0.8513575306180488,
+        "pixel_accuracy": 0.9082255853527558,
+        "omission_error": 0.14864246938195125,
+        "commission_error": 0.15211135392769617,
+        "valid_pixels": 167122003,
+        "water_fraction_gt": 0.3045178497531531,
+        "confusion_matrix": [
+          [
+            108457504,
+            7772866
+          ],
+          [
+            7564658,
+            43326975
+          ]
+        ]
+      }
+    }
+  },
+  "per_scene_iou_water": {
+    "EMSR264_08VATOMANDRY_DEL_v2": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.4391495663673282,
+        "all": 0.41855119944948005
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.9253447912562547,
+        "all": 0.8947288578031386
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.8712857076807159,
+        "all": 0.8319166037808092
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.47370297714503024,
+        "all": 0.45156510365213276
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.9284624636516319,
+        "all": 0.8986299215974957
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.8785566763906495,
+        "all": 0.8397024537612979
+      },
+      "ndwi_gt0": {
+        "clear": 0.9756887574475043,
+        "all": 0.9708085612196107
+      },
+      "mndwi_gt0": {
+        "clear": 0.8667760790418285,
+        "all": 0.8303945150848555
+      },
+      "_meta": {
+        "s2_date": "2018-01-16T07:02:27.460000+00:00",
+        "ems_code": "EMSR264",
+        "event_type": "Flash flood",
+        "cloud_probability": 0.3621639233347574,
+        "bounds_crs": "EPSG:32739"
+      }
+    },
+    "EMSR264_18MIANDRIVAZODETAIL_DEL_v2": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.4952546872920928,
+        "all": 0.4952546872920928
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.4929879766751296,
+        "all": 0.4929879766751296
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.49592313455859666,
+        "all": 0.49592313455859666
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.5016094012174808,
+        "all": 0.5016094012174808
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.4948029675671066,
+        "all": 0.4948029675671066
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.4991685013920947,
+        "all": 0.4991685013920947
+      },
+      "ndwi_gt0": {
+        "clear": 0.11282504952839005,
+        "all": 0.11282504952839005
+      },
+      "mndwi_gt0": {
+        "clear": 0.4316226638979531,
+        "all": 0.4316226638979531
+      },
+      "_meta": {
+        "s2_date": "2018-01-19T07:12:09.460000+00:00",
+        "ems_code": "EMSR264",
+        "event_type": "Flash flood",
+        "cloud_probability": 0.1118611680314752,
+        "bounds_crs": "EPSG:32738"
+      }
+    },
+    "EMSR273_01GRILE_DEL_MONIT04_v2": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.8756943319070294,
+        "all": 0.8756943319070294
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.9170652214846438,
+        "all": 0.9170652214846438
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.9218574876403567,
+        "all": 0.9218574876403567
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.8807714947624965,
+        "all": 0.8807714947624965
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.9170269974411954,
+        "all": 0.9170269974411954
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.9213320380484221,
+        "all": 0.9213320380484221
+      },
+      "ndwi_gt0": {
+        "clear": 0.9164870893349968,
+        "all": 0.9164870893349968
+      },
+      "mndwi_gt0": {
+        "clear": 0.9050593128535701,
+        "all": 0.9050593128535701
+      },
+      "_meta": {
+        "s2_date": "2018-03-28T09:30:32.460000+00:00",
+        "ems_code": "EMSR273",
+        "event_type": "None",
+        "cloud_probability": 0.069660493800435,
+        "bounds_crs": "EPSG:32634"
+      }
+    },
+    "EMSR286_08ITUANGONORTH_DEL_MONIT02_v1": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.5897148835325225,
+        "all": 0.5887050571489164
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.8323250035117972,
+        "all": 0.8198890026915656
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.8230779963722618,
+        "all": 0.8018431453350067
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.5608472759052536,
+        "all": 0.5591014472912766
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.832790324451835,
+        "all": 0.8202532367535504
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.82383268249443,
+        "all": 0.8010098189771511
+      },
+      "ndwi_gt0": {
+        "clear": 0.7768056643742202,
+        "all": 0.7649721332463935
+      },
+      "mndwi_gt0": {
+        "clear": 0.2965958509014279,
+        "all": 0.24319387219288033
+      },
+      "_meta": {
+        "s2_date": "2018-05-22T15:36:21.460000+00:00",
+        "ems_code": "EMSR286",
+        "event_type": "Riverine flood",
+        "cloud_probability": 0.3722398345308765,
+        "bounds_crs": "EPSG:32618"
+      }
+    },
+    "EMSR286_09ITUANGOSOUTH_DEL_MONIT02_v1": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.2407115283495569,
+        "all": 0.2426644146521693
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.7964290757330906,
+        "all": 0.7794602721652015
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.772562851782364,
+        "all": 0.7483733224888166
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.2190587182020252,
+        "all": 0.2207257834079436
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.7964328106453427,
+        "all": 0.779260435433143
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.7681978171492798,
+        "all": 0.740691678773894
+      },
+      "ndwi_gt0": {
+        "clear": 0.22712572840711476,
+        "all": 0.22267170216894808
+      },
+      "mndwi_gt0": {
+        "clear": 0.12614539532848845,
+        "all": 0.10843333270735916
+      },
+      "_meta": {
+        "s2_date": "2018-05-22T15:36:21.460000+00:00",
+        "ems_code": "EMSR286",
+        "event_type": "Riverine flood",
+        "cloud_probability": 0.3501505275045563,
+        "bounds_crs": "EPSG:32618"
+      }
+    },
+    "EMSR333_01RATTALORO_DEL_MONIT01_v1": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.5760286686604105,
+        "all": 0.5760286686604105
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.8345011497322856,
+        "all": 0.8345011497322856
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.8364397250174027,
+        "all": 0.8364397250174027
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.5559235013187843,
+        "all": 0.5559235013187843
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.8342341143797914,
+        "all": 0.8342341143797914
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.8346538543388937,
+        "all": 0.8346538543388937
+      },
+      "ndwi_gt0": {
+        "clear": 0.7795680384952297,
+        "all": 0.7795680384952297
+      },
+      "mndwi_gt0": {
+        "clear": 0.6739232501317491,
+        "all": 0.6739232501317491
+      },
+      "_meta": {
+        "s2_date": "2018-11-04T09:52:33.150000+00:00",
+        "ems_code": "EMSR333",
+        "event_type": "Flash flood",
+        "cloud_probability": 0.2242647110525248,
+        "bounds_crs": "EPSG:32633"
+      }
+    },
+    "EMSR333_02PORTOPALO_DEL_MONIT01_v1": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.31051446796214177,
+        "all": 0.31051446796214177
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.7438029884886005,
+        "all": 0.7438029884886005
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.774509234709347,
+        "all": 0.774509234709347
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.30042925634600137,
+        "all": 0.30042925634600137
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.7407393717619373,
+        "all": 0.7407393717619373
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.7708912541432598,
+        "all": 0.7708912541432598
+      },
+      "ndwi_gt0": {
+        "clear": 0.41626756975454793,
+        "all": 0.41626756975454793
+      },
+      "mndwi_gt0": {
+        "clear": 0.39306528157801174,
+        "all": 0.39306528157801174
+      },
+      "_meta": {
+        "s2_date": "2018-11-04T09:52:33.150000+00:00",
+        "ems_code": "EMSR333",
+        "event_type": "Flash flood",
+        "cloud_probability": 0.3691942996129447,
+        "bounds_crs": "EPSG:32633"
+      }
+    },
+    "EMSR342_06NORTHNORMANTON_DEL_v1": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.554401213416729,
+        "all": 0.5138049918261243
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.8295563560042543,
+        "all": 0.7972604533860203
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.8292725666104206,
+        "all": 0.7934447406426477
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.566435494883187,
+        "all": 0.5263299054739983
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.8316085000920386,
+        "all": 0.8000793414472311
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.8337650309969242,
+        "all": 0.8007120462562097
+      },
+      "ndwi_gt0": {
+        "clear": 0.4674126353565756,
+        "all": 0.4167284944855969
+      },
+      "mndwi_gt0": {
+        "clear": 0.8016264851593107,
+        "all": 0.7808383988658774
+      },
+      "_meta": {
+        "s2_date": "2019-02-09T00:51:56.500000+00:00",
+        "ems_code": "EMSR342",
+        "event_type": "Flash flood",
+        "cloud_probability": 0.3270845938102812,
+        "bounds_crs": "EPSG:32754"
+      }
+    },
+    "EMSR342_07SOUTHNORMANTON_DEL_MONIT03_v2": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.45959931500758994,
+        "all": 0.45945519695885473
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.6646209470677825,
+        "all": 0.6642937525283932
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.6397718133768098,
+        "all": 0.6393624162859669
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.48111816318385625,
+        "all": 0.4809649571553533
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.6674451574566093,
+        "all": 0.667124583627991
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.6434000369033297,
+        "all": 0.6430046093681749
+      },
+      "ndwi_gt0": {
+        "clear": 0.24186305860287502,
+        "all": 0.24171846803934294
+      },
+      "mndwi_gt0": {
+        "clear": 0.6710138716628976,
+        "all": 0.6707082666659431
+      },
+      "_meta": {
+        "s2_date": "2019-02-19T00:52:03.500000+00:00",
+        "ems_code": "EMSR342",
+        "event_type": "Flash flood",
+        "cloud_probability": 0.0769611955925979,
+        "bounds_crs": "EPSG:32754"
+      }
+    },
+    "EMSR347_06MWANZA_DEL_v1": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.2600898902858742,
+        "all": 0.2536312401448597
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.49398192558889414,
+        "all": 0.49369404719168036
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.4301550583883026,
+        "all": 0.4298199345606429
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.267623855632103,
+        "all": 0.26055284070555235
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.502371437293592,
+        "all": 0.5020704249571493
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.45006248156544465,
+        "all": 0.44964176763082636
+      },
+      "ndwi_gt0": {
+        "clear": 0.020659814878672415,
+        "all": 0.020671195446245884
+      },
+      "mndwi_gt0": {
+        "clear": 0.26965871102098976,
+        "all": 0.26322426051248315
+      },
+      "_meta": {
+        "s2_date": "2019-03-10T08:04:11.500000+00:00",
+        "ems_code": "EMSR347",
+        "event_type": "Riverine flood",
+        "cloud_probability": 0.058987917298069,
+        "bounds_crs": "EPSG:32736"
+      }
+    },
+    "EMSR347_07ZOMBA_DEL_MONIT01_v1": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.636391222505661,
+        "all": 0.636391222505661
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.8063172464772923,
+        "all": 0.8063172464772923
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.8117364926055637,
+        "all": 0.8117364926055637
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.6456400101457798,
+        "all": 0.6456400101457798
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.8082468449457761,
+        "all": 0.8082468449457761
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.815188129907264,
+        "all": 0.815188129907264
+      },
+      "ndwi_gt0": {
+        "clear": 0.610582505844686,
+        "all": 0.610582505844686
+      },
+      "mndwi_gt0": {
+        "clear": 0.8240720250857387,
+        "all": 0.8240720250857387
+      },
+      "_meta": {
+        "s2_date": "2019-03-12T07:54:16.500000+00:00",
+        "ems_code": "EMSR347",
+        "event_type": "Riverine flood",
+        "cloud_probability": 0.2052645816472624,
+        "bounds_crs": "EPSG:32736"
+      }
+    },
+    "EMSR347_07ZOMBA_DEL_v2": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.4674437512822656,
+        "all": 0.4674437512822656
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.5220470730609902,
+        "all": 0.5220470730609902
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.5034344124244235,
+        "all": 0.5034344124244235
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.4919600305133647,
+        "all": 0.4919600305133647
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.5335504633399247,
+        "all": 0.5335504633399247
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.5277122824434586,
+        "all": 0.5277122824434586
+      },
+      "ndwi_gt0": {
+        "clear": 0.0553464499572284,
+        "all": 0.0553464499572284
+      },
+      "mndwi_gt0": {
+        "clear": 0.8266633985471723,
+        "all": 0.8266633985471723
+      },
+      "_meta": {
+        "s2_date": "2019-03-10T08:04:09.500000+00:00",
+        "ems_code": "EMSR347",
+        "event_type": "Riverine flood",
+        "cloud_probability": 0.0212072114421849,
+        "bounds_crs": "EPSG:32736"
+      }
+    },
+    "EMSR419_AOI01_DEL_MONIT01": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.6858743308376619,
+        "all": 0.6858743308376619
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.9095439824084417,
+        "all": 0.9095439824084417
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.905839021404329,
+        "all": 0.905839021404329
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.688644514857301,
+        "all": 0.688644514857301
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.9105730049175297,
+        "all": 0.9105730049175297
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.9080508987461423,
+        "all": 0.9080508987461423
+      },
+      "ndwi_gt0": {
+        "clear": 0.8660803888269374,
+        "all": 0.8660803888269374
+      },
+      "mndwi_gt0": {
+        "clear": 0.9045600205066504,
+        "all": 0.9045600205066504
+      },
+      "_meta": {
+        "s2_date": "2020-01-16T06:52:18.251000+00:00",
+        "ems_code": "EMSR419",
+        "event_type": "Riverine flood",
+        "cloud_probability": 0.0309833703070881,
+        "bounds_crs": "EPSG:32640"
+      }
+    },
+    "EMSR422_AOI06_DEL_PRODUCT": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.8162394354087221,
+        "all": 0.8160219396520182
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.9749019717222993,
+        "all": 0.9747385615979198
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.9761463818159004,
+        "all": 0.9759942111064522
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.8431494383966867,
+        "all": 0.8429183811850379
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.9749594508553662,
+        "all": 0.9747972560161127
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.9762939668877325,
+        "all": 0.9761453106751709
+      },
+      "ndwi_gt0": {
+        "clear": 0.9681894913320693,
+        "all": 0.9679645884912597
+      },
+      "mndwi_gt0": {
+        "clear": 0.9695745897875309,
+        "all": 0.9692087188282564
+      },
+      "_meta": {
+        "s2_date": "2020-01-26T11:00:00.209500+00:00",
+        "ems_code": "EMSR422",
+        "event_type": "Coastal flood",
+        "cloud_probability": 0.0418533597772885,
+        "bounds_crs": "EPSG:32630"
+      }
+    },
+    "EMSR438_AOI02_DEL_MONIT03": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.8906505234717769,
+        "all": 0.8874508160124026
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.961600854104656,
+        "all": 0.9586147862918891
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.9620730911522801,
+        "all": 0.9590349529481271
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.8886374826777125,
+        "all": 0.8854099162090567
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.9618839288018309,
+        "all": 0.9589128888273326
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.9622976808061919,
+        "all": 0.9592780600691561
+      },
+      "ndwi_gt0": {
+        "clear": 0.9707422431944647,
+        "all": 0.9687823912189748
+      },
+      "mndwi_gt0": {
+        "clear": 0.9535836721452026,
+        "all": 0.9509576422036131
+      },
+      "_meta": {
+        "s2_date": "2020-05-14T08:20:07.964000+00:00",
+        "ems_code": "EMSR438",
+        "event_type": "Flash flood",
+        "cloud_probability": 0.0344202095641304,
+        "bounds_crs": "EPSG:32636"
+      }
+    },
+    "EMSR438_AOI06_DEL_PRODUCT": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.8182996763222603,
+        "all": 0.8142483116794076
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.916455409243593,
+        "all": 0.9107370177376164
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.9198893106041832,
+        "all": 0.9153450557598383
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.8300616828956046,
+        "all": 0.8259246278194042
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.9179189365874918,
+        "all": 0.9123648526018305
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.9221640124759993,
+        "all": 0.9177528147963095
+      },
+      "ndwi_gt0": {
+        "clear": 0.9139773246578026,
+        "all": 0.9139562682593179
+      },
+      "mndwi_gt0": {
+        "clear": 0.9251020365005181,
+        "all": 0.9227747181907183
+      },
+      "_meta": {
+        "s2_date": "2020-05-06T08:10:43.297000+00:00",
+        "ems_code": "EMSR438",
+        "event_type": "Coastal flood",
+        "cloud_probability": 0.0541951699048852,
+        "bounds_crs": "EPSG:32736"
+      }
+    },
+    "EMSR466_AOI01_DEL_PRODUCT": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.16112492061656108,
+        "all": 0.16091008533003287
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.3045373205464418,
+        "all": 0.3042614514425634
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.31415544299974724,
+        "all": 0.3138693632139929
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.19215105757205989,
+        "all": 0.19186844641761835
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.3089924997898107,
+        "all": 0.30871288360022126
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.3225457820474332,
+        "all": 0.3222527370650635
+      },
+      "ndwi_gt0": {
+        "clear": 0.007068511390267169,
+        "all": 0.007061940404276001
+      },
+      "mndwi_gt0": {
+        "clear": 0.2784606080715857,
+        "all": 0.2782166994610317
+      },
+      "_meta": {
+        "s2_date": "2020-09-27T10:17:02.065500+00:00",
+        "ems_code": "EMSR466",
+        "event_type": "Riverine flood",
+        "cloud_probability": 0.1310769232809616,
+        "bounds_crs": "EPSG:32632"
+      }
+    },
+    "EMSR9284_01YLITORNIONORTHERN_DEL_MONIT01_v1": {
+      "unet_resnet34_rgb@0.5": {
+        "clear": 0.7827192833039467,
+        "all": 0.7827179817696345
+      },
+      "unet_resnet34_s2@0.5": {
+        "clear": 0.8249749570363836,
+        "all": 0.8249734637705799
+      },
+      "v2_r4_unet_s2i_radiometric@0.5": {
+        "clear": 0.834463938155574,
+        "all": 0.8344601301045262
+      },
+      "unet_resnet34_rgb@val0.4": {
+        "clear": 0.7885808153488191,
+        "all": 0.7885794948877922
+      },
+      "unet_resnet34_s2@val0.45": {
+        "clear": 0.827554411774825,
+        "all": 0.8275529091730641
+      },
+      "v2_r4_unet_s2i_radiometric@val0.4": {
+        "clear": 0.8372378095513169,
+        "all": 0.8372340014236623
+      },
+      "ndwi_gt0": {
+        "clear": 0.8210939577011579,
+        "all": 0.821090194029235
+      },
+      "mndwi_gt0": {
+        "clear": 0.8156884810401146,
+        "all": 0.8156875209387429
+      },
+      "_meta": {
+        "s2_date": "2018-05-19T10:11:16.970000+00:00",
+        "ems_code": "EMSR9284",
+        "event_type": "Ice jam flood",
+        "cloud_probability": 0.0190706043798945,
+        "bounds_crs": "EPSG:32634"
+      }
+    }
+  }
+}

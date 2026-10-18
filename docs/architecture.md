@@ -75,6 +75,30 @@ Every number comes from the API (`src/api.ts`). Ground-truth layers are labelled
 
 **Plan a route:** `POST /api/routes/plan` → `areas.annotated_graph` (cached per area/source/model/threshold/buffer) → flood layer = model prediction on the chip's S1+S2 (or the hand label in reference mode, or an uploaded prediction) → `annotate_graph` → `plan()` → baseline, risk-aware, alternatives, explanation, alignment report, OSM attribution, disclaimer.
 
+## v2 additions
+| Module | Purpose |
+|---|---|
+| `training/dataset.py` | `s1s2i` / `s2i` modalities (NDWI and MNDWI index channels); `radiometric_augment` (per-chip S2 gain ± per-band jitter, S1 dB offset), applied to raw values before normalisation and to training data only |
+| `training/gpu_guard.py` | detects GPU compute processes from other projects; used by `--polite` training, the suite runner and the training-start safeguards |
+| `training/registry.py` | experiment registry (one row per run: data, model, loss, optimiser, seed, time, metrics, VRAM, checkpoint) |
+| `training/evaluate.py` | adds a **validation-only** threshold sweep and reports every split at 0.5 and at the validation-selected threshold; records inference peak VRAM |
+| `scripts/audit_reproduce.py`, `analyze_weaknesses.py` | independent re-verification from raw GeoTIFFs, leakage/proximity checks, error stratification, calibration |
+| `scripts/evaluate_worldfloods.py` | external evaluation on the WorldFloods v2 test split (windowed, CRS-aware, explicit label mapping) |
+| `backend/app/services/history.py` | SQLite analysis history (metadata + references), CSV/JSON export |
+| `backend/app/services/reports.py` | route-result persistence; JSON / GeoJSON export; self-contained HTML reports (embedded images, SVG route map) |
+| `backend/app/services/training_control.py` | guarded start/stop: fixed presets only, typed confirmation, preflight checks, graceful STOP file |
+| `backend/app/services/diagnostics.py` | system diagnostics, version info, warnings derived from real state, API error log |
+| `backend/app/routing/planner.py` | explicit route `status` (`flood_free_route_found` / `no_flood_free_route` / `no_route_avoids_closures`), per-route length by risk class, flood-affected roads, documented risk level |
+
+New endpoints:
+* `/api/history`, `/api/history/{id}`, `/api/history/export`, `/api/reports/{id}`
+* `/api/routes/results/{id}` (+ `/export?format=json|geojson|html`), `/api/routes/areas/{id}/search`
+* `/api/experiments`, `/api/evaluation/external`
+* `/api/diagnostics`, `/api/warnings`, `/api/version`, `/api/segmentation/formats`
+* `/api/training/presets`, `/api/training/start`, `/api/training/stop`
+
+The frontend was rebuilt around a design system (`docs/ui_redesign_plan.md`): an `AppShell` with live status chips, and `Panel`, `Metric`, `DataTable` (sortable, CSV), `ChartFrame` (a "Data" drawer behind every chart), `InfoTip`, `Drawer` and more. There are eight code-split pages.
+
 ## Configuration
 
 All settings come from environment variables (`.env.example`):

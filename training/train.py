@@ -91,6 +91,8 @@ def main() -> int:
     ap.add_argument("--run", default=None, help="run name (required with --resume)")
     ap.add_argument("--resume", action="store_true")
     ap.add_argument("--smoke", action="store_true", help="tiny 2-epoch run to check the pipeline")
+    ap.add_argument("--polite", action="store_true",
+                    help="yield the GPU: after any epoch, pause (exit 75) if another project's GPU job is running")
     args = ap.parse_args()
 
     if args.resume:
@@ -160,7 +162,7 @@ def train(cfg: dict, run_dir: Path, ck_dir: Path, args, log: Logger) -> int:
     d, t = cfg["data"], cfg["train"]
 
     train_ds = FloodDataset("train", d["modality"], d["crop_size"], d["crops_per_chip"], d["augment"],
-                            seed=cfg["seed"])
+                            seed=cfg["seed"], radiometric=d.get("radiometric"))
     val_ds = FloodDataset("valid", d["modality"])
     if args.smoke:
         train_ds = Subset(train_ds, range(min(16, len(train_ds))))
@@ -244,6 +246,9 @@ def train(cfg: dict, run_dir: Path, ck_dir: Path, args, log: Logger) -> int:
                 opt.zero_grad(set_to_none=True)
                 sched.step()
             losses.append(loss.item())
+            if i % 25 == 0 or i + 1 == len(train_dl):  # batch-level progress for the dashboard
+                _status(run_dir, state="running", pid=os.getpid(), phase="train", current_epoch=epoch,
+                        step=i + 1, steps=len(train_dl), running_loss=float(np.mean(losses[-25:])))
         train_time = time.time() - t0
         val = validate(model, val_dl, device, amp, t["threshold"], cfg)
         peak = torch.cuda.max_memory_allocated() / 2**20 if device.type == "cuda" else 0
@@ -274,6 +279,21 @@ def train(cfg: dict, run_dir: Path, ck_dir: Path, args, log: Logger) -> int:
         if bad_epochs >= t["early_stopping_patience"]:
             log(f"early stopping: no improvement in {bad_epochs} epochs")
             break
+        stop_file = run_dir / "STOP"
+        if stop_file.exists():
+            stop_file.unlink(missing_ok=True)
+            log(f"stop requested; checkpoint saved at epoch {epoch}. Resume with: python -m training.train "
+                f"--resume --run {cfg['run_name']}")
+            _status(run_dir, state="stopped", note="stopped on request after a completed epoch")
+            return 0
+        if getattr(args, "polite", False):
+            from training.gpu_guard import foreign_gpu_processes
+
+            other = foreign_gpu_processes()
+            if other:
+                log(f"pausing: another GPU job is running (pid {other[0]['pid']}); checkpoint saved at epoch {epoch}")
+                _status(run_dir, state="paused", note=f"yielded GPU to pid {other[0]['pid']}")
+                return 75
 
     _status(run_dir, state="completed", finished=time.strftime("%Y-%m-%dT%H:%M:%S"),
             total_time_s=round(time.time() - t0_run))

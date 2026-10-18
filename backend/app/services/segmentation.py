@@ -24,7 +24,8 @@ from backend.app.services.models import registry
 RESULT_FILES = {
     "input.png": "image/png", "overlay.png": "image/png", "mask.png": "image/png",
     "probability.png": "image/png", "probability.tif": "image/tiff", "ground_truth.png": "image/png",
-    "errors.png": "image/png",
+    "errors.png": "image/png", "mask_rgba.png": "image/png", "uncertainty.png": "image/png",
+    "ndwi_mask.png": "image/png", "model_vs_ndwi.png": "image/png", "result.json": "application/json",
 }
 _infer_lock = threading.Lock()  # one GPU inference at a time (4 GB laptop GPU)
 _recent: deque = deque(maxlen=50)
@@ -80,6 +81,12 @@ def read_scene(data: bytes, filename: str):
     return scene
 
 
+def _colormap(v: np.ndarray, name: str) -> np.ndarray:
+    import matplotlib
+
+    return (matplotlib.colormaps[name](np.clip(v, 0, 1))[..., :3] * 255).astype(np.uint8)
+
+
 def _png(arr: np.ndarray) -> bytes:
     b = io.BytesIO()
     Image.fromarray(arr).save(b, format="PNG", optimize=False)
@@ -112,6 +119,13 @@ def run_prediction(scene, model: str | None, threshold: float, tta: bool, source
     (out / "mask.png").write_bytes(_png((mask * 255).astype(np.uint8)))
     (out / "probability.png").write_bytes(_png(prob_colormap(prob)))
     write_geotiff(out / "probability.tif", prob, scene)
+    # transparent water layer: the client controls overlay opacity without re-rendering on the server
+    rgba = np.zeros(mask.shape + (4,), np.uint8)
+    rgba[mask] = (0, 140, 255, 255)
+    (out / "mask_rgba.png").write_bytes(_png(rgba))
+    # per-pixel uncertainty of the binary decision: 1 at P=0.5, 0 at P in {0,1}
+    unc = 1.0 - np.abs(2.0 * prob - 1.0)
+    (out / "uncertainty.png").write_bytes(_png(_colormap(unc, "magma")))
 
     h, w = prob.shape
     area = None
@@ -148,7 +162,12 @@ def run_prediction(scene, model: str | None, threshold: float, tta: bool, source
         "area": area,
         "timing": {**timing, "queue_ms": round((t_wait - t0) * 1e3, 1),
                    "total_ms": round((time.perf_counter() - t0) * 1e3, 1)},
-        "files": ["input.png", "overlay.png", "mask.png", "probability.png", "probability.tif"],
+        "files": ["input.png", "overlay.png", "mask.png", "mask_rgba.png", "probability.png", "uncertainty.png",
+                  "probability.tif", "result.json"],
+        "uncertainty": {"definition": "1 - |2P - 1| (binary-decision uncertainty; not a calibrated error bar)",
+                        "mean": round(float(unc.mean()), 5),
+                        "uncertain_pixels_fraction": round(float((unc > 0.6).mean()), 5)},
+        "baseline": None,
         "ground_truth": None,
         "warnings": [],
     }
@@ -158,6 +177,27 @@ def run_prediction(scene, model: str | None, threshold: float, tta: bool, source
             "the training distribution; treat the mask as indicative only.")
     if not scene.georeferenced:
         result["warnings"].append("No georeferencing: the mask cannot be placed on a map or used for routing.")
+    if scene.s2 is not None:
+        # non-learned reference computed from the same Sentinel-2 bands the model received
+        from backend.app.services.figures import agreement_rgb
+
+        g, n = scene.s2[2].astype(np.float32), scene.s2[7].astype(np.float32)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            ndwi = (g - n) / (g + n)
+        nd_mask = np.nan_to_num(ndwi, nan=-1) > 0
+        (out / "ndwi_mask.png").write_bytes(_png((nd_mask * 255).astype(np.uint8)))
+        (out / "model_vs_ndwi.png").write_bytes(_png(agreement_rgb(mask, nd_mask)))
+        inter, union = float((mask & nd_mask).sum()), float((mask | nd_mask).sum())
+        result["baseline"] = {
+            "name": "NDWI > 0 (McFeeters 1996), Sentinel-2 B3/B8",
+            "water_fraction": round(float(nd_mask.mean()), 5),
+            "agreement_iou_with_model": round(inter / union, 4) if union else None,
+            "model_only_fraction": round(float((mask & ~nd_mask).mean()), 5),
+            "ndwi_only_fraction": round(float((~mask & nd_mask).mean()), 5),
+            "metrics_vs_ground_truth": summarize(confusion(nd_mask.astype(np.int8), ground_truth))
+            if ground_truth is not None else None,
+        }
+        result["files"] += ["ndwi_mask.png", "model_vs_ndwi.png"]
     if ground_truth is not None:
         from backend.app.services.figures import error_rgb, label_rgb
 
@@ -171,6 +211,17 @@ def run_prediction(scene, model: str | None, threshold: float, tta: bool, source
     np.save(out / "probability.npy", prob.astype(np.float16))
     _recent.appendleft({k: result[k] for k in ("id", "created", "source", "stats")} |
                        {"model": name, "total_ms": result["timing"]["total_ms"]})
+    from backend.app.services import history
+
+    gt = result["ground_truth"]["metrics"] if result["ground_truth"] else None
+    history.add(rid, "segmentation", result["created"],
+                source.get("chip_id") or source.get("filename") or "upload", name, source.get("type"),
+                {"water_fraction": result["stats"]["water_fraction"],
+                 "water_area_km2": area["water_area_km2"] if area else None,
+                 "georeferenced": scene.georeferenced, "input_kind": scene.kind, "width": w, "height": h,
+                 "total_ms": result["timing"]["total_ms"],
+                 "ndwi_agreement_iou": result["baseline"]["agreement_iou_with_model"] if result["baseline"] else None},
+                gt, {"threshold": threshold, "tta": tta, "checkpoint_epoch": pred.epoch})
     _prune()
     return result
 

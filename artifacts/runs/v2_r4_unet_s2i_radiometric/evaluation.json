@@ -1,0 +1,862 @@
+{
+  "run": "v2_r4_unet_s2i_radiometric",
+  "checkpoint": "best.pt",
+  "checkpoint_epoch": 53,
+  "threshold": 0.5,
+  "tta": false,
+  "modality": "s2i",
+  "config": {
+    "seed": 42,
+    "run_name": "v2_r4_unet_s2i_radiometric",
+    "data": {
+      "modality": "s2i",
+      "crop_size": 256,
+      "crops_per_chip": 4,
+      "num_workers": 2,
+      "augment": true,
+      "radiometric": {
+        "enabled": true,
+        "p": 0.8,
+        "s2_gain": [
+          0.75,
+          1.25
+        ],
+        "s2_band_jitter": 0.05,
+        "s1_offset_db": 2.0,
+        "s1_pol_jitter_db": 0.5
+      }
+    },
+    "model": {
+      "arch": "unet",
+      "encoder": "resnet34",
+      "encoder_weights": "imagenet"
+    },
+    "train": {
+      "epochs": 60,
+      "batch_size": 8,
+      "grad_accum": 1,
+      "lr": 0.0005,
+      "weight_decay": 0.0001,
+      "warmup_epochs": 2,
+      "amp": true,
+      "bce_weight": 1.0,
+      "dice_weight": 1.0,
+      "pos_weight": null,
+      "early_stopping_patience": 15,
+      "monitor": "val_iou_water",
+      "threshold": 0.5
+    }
+  },
+  "meta": {
+    "pretrained": "resnet34 encoder initialised from imagenet weights",
+    "trained_on": "Sen1Floods11 v1.1 HandLabeled, official train split",
+    "selected_on": "official valid split",
+    "n_params": 24474001,
+    "modality": "s2i",
+    "bad_epochs": 0,
+    "val_metrics": {
+      "iou_water": 0.8345236893517659,
+      "iou_not_water": 0.978215618266123,
+      "miou": 0.9063696538089445,
+      "dice_water": 0.9097987605127598,
+      "f1_water": 0.9097987605127599,
+      "precision_water": 0.9221243601324902,
+      "recall_water": 0.8977983156097703,
+      "pixel_accuracy": 0.9803719932149857,
+      "omission_error": 0.10220168439022974,
+      "commission_error": 0.07787563986750978,
+      "valid_pixels": 20294725,
+      "water_fraction_gt": 0.1102554974260553,
+      "confusion_matrix": [
+        [
+          17887462,
+          169658
+        ],
+        [
+          228687,
+          2008918
+        ]
+      ],
+      "mean_chip_iou_water": 0.6047006791419544,
+      "n_chips": 89,
+      "loss": 0.31911147865984174
+    },
+    "epoch": 53
+  },
+  "splits": {
+    "valid": {
+      "iou_water": 0.8345304823310612,
+      "iou_not_water": 0.9782166537495426,
+      "miou": 0.9063735680403019,
+      "dice_water": 0.9098027973573469,
+      "f1_water": 0.9098027973573469,
+      "precision_water": 0.9221312397208619,
+      "recall_water": 0.8977996563289767,
+      "pixel_accuracy": 0.9803729294188515,
+      "omission_error": 0.10220034367102326,
+      "commission_error": 0.07786876027913812,
+      "valid_pixels": 20294725,
+      "water_fraction_gt": 0.1102554974260553,
+      "confusion_matrix": [
+        [
+          17887478,
+          169642
+        ],
+        [
+          228684,
+          2008921
+        ]
+      ],
+      "mean_chip_iou_water": 0.6046988360442513,
+      "n_chips": 89
+    },
+    "test": {
+      "iou_water": 0.8233912854452009,
+      "iou_not_water": 0.9737316728068464,
+      "miou": 0.8985614791260237,
+      "dice_water": 0.9031427231420172,
+      "f1_water": 0.903142723142017,
+      "precision_water": 0.9361674188616373,
+      "recall_water": 0.8723686246176593,
+      "pixel_accuracy": 0.9765977281587838,
+      "omission_error": 0.12763137538234076,
+      "commission_error": 0.06383258113836261,
+      "valid_pixels": 20517367,
+      "water_fraction_gt": 0.1250697031446579,
+      "confusion_matrix": [
+        [
+          17798628,
+          152638
+        ],
+        [
+          327515,
+          2238586
+        ]
+      ],
+      "mean_chip_iou_water": 0.6180622399919141,
+      "n_chips": 90
+    },
+    "bolivia": {
+      "iou_water": 0.8173104147261215,
+      "iou_not_water": 0.9639418122150938,
+      "miou": 0.8906261134706077,
+      "dice_water": 0.8994725481164368,
+      "f1_water": 0.8994725481164367,
+      "precision_water": 0.9244796984943282,
+      "recall_water": 0.8757826515178163,
+      "pixel_accuracy": 0.9689505773559313,
+      "omission_error": 0.12421734848218369,
+      "commission_error": 0.0755203015056718,
+      "valid_pixels": 2867815,
+      "water_fraction_gt": 0.1586099521761341,
+      "confusion_matrix": [
+        [
+          2380409,
+          32542
+        ],
+        [
+          56502,
+          398362
+        ]
+      ],
+      "mean_chip_iou_water": 0.5846081715074127,
+      "n_chips": 15
+    }
+  },
+  "per_event": {
+    "test": {
+      "Ghana": {
+        "iou_water": 0.5415344803317561,
+        "iou_not_water": 0.9583617690384831,
+        "miou": 0.7499481246851196,
+        "dice_water": 0.7025914596671384,
+        "f1_water": 0.7025914596671384,
+        "precision_water": 0.8815147082150977,
+        "recall_water": 0.5840461496242753,
+        "pixel_accuracy": 0.9603136480092153,
+        "omission_error": 0.41595385037572474,
+        "commission_error": 0.11848529178490227,
+        "valid_pixels": 2133857,
+        "water_fraction_gt": 0.08026264177965065,
+        "confusion_matrix": [
+          [
+            1949143,
+            13445
+          ],
+          [
+            71240,
+            100029
+          ]
+        ]
+      },
+      "India": {
+        "iou_water": 0.9083938643353703,
+        "iou_not_water": 0.9744164931456779,
+        "miou": 0.9414051787405241,
+        "dice_water": 0.9519983073847635,
+        "f1_water": 0.9519983073847635,
+        "precision_water": 0.953636101866103,
+        "recall_water": 0.9503661288231584,
+        "pixel_accuracy": 0.9795934951280454,
+        "omission_error": 0.04963387117684161,
+        "commission_error": 0.04636389813389695,
+        "valid_pixels": 3224168,
+        "water_fraction_gt": 0.2129253190280407,
+        "confusion_matrix": [
+          [
+            2505941,
+            31720
+          ],
+          [
+            34074,
+            652433
+          ]
+        ]
+      },
+      "Mekong": {
+        "iou_water": 0.9409001757322564,
+        "iou_not_water": 0.989805622184169,
+        "miou": 0.9653528989582127,
+        "dice_water": 0.9695503019646816,
+        "f1_water": 0.9695503019646816,
+        "precision_water": 0.9742657826130793,
+        "recall_water": 0.9648802476356219,
+        "pixel_accuracy": 0.9912291325470335,
+        "omission_error": 0.03511975236437813,
+        "commission_error": 0.02573421738692068,
+        "valid_pixels": 1453220,
+        "water_fraction_gt": 0.14471931297394752,
+        "confusion_matrix": [
+          [
+            1237551,
+            5360
+          ],
+          [
+            7386,
+            202923
+          ]
+        ]
+      },
+      "Nigeria": {
+        "iou_water": 0.9409026942459334,
+        "iou_not_water": 0.9882624636178532,
+        "miou": 0.9645825789318934,
+        "dice_water": 0.969551639075329,
+        "f1_water": 0.969551639075329,
+        "precision_water": 0.9681672936132346,
+        "recall_water": 0.9709399490516136,
+        "pixel_accuracy": 0.9901105638175829,
+        "omission_error": 0.029060050948386363,
+        "commission_error": 0.03183270638676536,
+        "valid_pixels": 760104,
+        "water_fraction_gt": 0.1621646511530001,
+        "confusion_matrix": [
+          [
+            632907,
+            3935
+          ],
+          [
+            3582,
+            119680
+          ]
+        ]
+      },
+      "Pakistan": {
+        "iou_water": 0.6128781473815146,
+        "iou_not_water": 0.9188502632945945,
+        "miou": 0.7658642053380545,
+        "dice_water": 0.7599807194071218,
+        "f1_water": 0.7599807194071218,
+        "precision_water": 0.9480694211645859,
+        "recall_water": 0.6341674333951743,
+        "pixel_accuracy": 0.9280889302876371,
+        "omission_error": 0.3658325666048256,
+        "commission_error": 0.05193057883541411,
+        "valid_pixels": 1107924,
+        "water_fraction_gt": 0.17952224159779911,
+        "confusion_matrix": [
+          [
+            902118,
+            6909
+          ],
+          [
+            72763,
+            126134
+          ]
+        ]
+      },
+      "Paraguay": {
+        "iou_water": 0.6001740928132311,
+        "iou_not_water": 0.9649004050026746,
+        "miou": 0.7825372489079528,
+        "dice_water": 0.7501359952129685,
+        "f1_water": 0.7501359952129686,
+        "precision_water": 0.8273725894111589,
+        "recall_water": 0.6860885032070285,
+        "pixel_accuracy": 0.9666571592678839,
+        "omission_error": 0.3139114967929715,
+        "commission_error": 0.17262741058884118,
+        "valid_pixels": 3306197,
+        "water_fraction_gt": 0.07295058340443718,
+        "confusion_matrix": [
+          [
+            3030482,
+            34526
+          ],
+          [
+            75712,
+            165477
+          ]
+        ]
+      },
+      "Somalia": {
+        "iou_water": 0.8332502854770061,
+        "iou_not_water": 0.987112597690489,
+        "miou": 0.9101814415837475,
+        "dice_water": 0.9090414899460353,
+        "f1_water": 0.9090414899460354,
+        "precision_water": 0.8925199871015089,
+        "recall_water": 0.9261861903443183,
+        "pixel_accuracy": 0.9878923144877657,
+        "omission_error": 0.07381380965568171,
+        "commission_error": 0.1074800128984911,
+        "valid_pixels": 1326678,
+        "water_fraction_gt": 0.06532406507080091,
+        "confusion_matrix": [
+          [
+            1230348,
+            9666
+          ],
+          [
+            6397,
+            80267
+          ]
+        ]
+      },
+      "Spain": {
+        "iou_water": 0.8573057644759826,
+        "iou_not_water": 0.9521619566870126,
+        "miou": 0.9047338605814976,
+        "dice_water": 0.9231713817653083,
+        "f1_water": 0.9231713817653083,
+        "precision_water": 0.9080921412041167,
+        "recall_water": 0.9387598725192767,
+        "pixel_accuracy": 0.9628416569200648,
+        "omission_error": 0.061240127480723223,
+        "commission_error": 0.09190785879588324,
+        "valid_pixels": 1481713,
+        "water_fraction_gt": 0.23781056115455557,
+        "confusion_matrix": [
+          [
+            1095867,
+            33479
+          ],
+          [
+            21579,
+            330788
+          ]
+        ]
+      },
+      "Sri-Lanka": {
+        "iou_water": 0.93196162257349,
+        "iou_not_water": 0.9845466097045592,
+        "miou": 0.9582541161390246,
+        "dice_water": 0.9647827489782749,
+        "f1_water": 0.9647827489782748,
+        "precision_water": 0.9868239034357957,
+        "recall_water": 0.9437046816769982,
+        "pixel_accuracy": 0.9872462492405004,
+        "omission_error": 0.05629531832300179,
+        "commission_error": 0.01317609656420425,
+        "valid_pixels": 2053984,
+        "water_fraction_gt": 0.18511682661598142,
+        "confusion_matrix": [
+          [
+            1668966,
+            4791
+          ],
+          [
+            21405,
+            358822
+          ]
+        ]
+      },
+      "USA": {
+        "iou_water": 0.8214093079047151,
+        "iou_not_water": 0.9937816206300847,
+        "miou": 0.9075954642673999,
+        "dice_water": 0.9019491712707183,
+        "f1_water": 0.9019491712707183,
+        "precision_water": 0.9205431252255504,
+        "recall_water": 0.8840914998700286,
+        "pixel_accuracy": 0.9939545259573318,
+        "omission_error": 0.1159085001299714,
+        "commission_error": 0.07945687477444965,
+        "valid_pixels": 3669522,
+        "water_fraction_gt": 0.03145096282295078,
+        "confusion_matrix": [
+          [
+            3545305,
+            8807
+          ],
+          [
+            13377,
+            102033
+          ]
+        ]
+      }
+    },
+    "bolivia": {
+      "Bolivia": {
+        "iou_water": 0.8173104147261215,
+        "iou_not_water": 0.9639418122150938,
+        "miou": 0.8906261134706077,
+        "dice_water": 0.8994725481164368,
+        "f1_water": 0.8994725481164367,
+        "precision_water": 0.9244796984943282,
+        "recall_water": 0.8757826515178163,
+        "pixel_accuracy": 0.9689505773559313,
+        "omission_error": 0.12421734848218369,
+        "commission_error": 0.0755203015056718,
+        "valid_pixels": 2867815,
+        "water_fraction_gt": 0.1586099521761341,
+        "confusion_matrix": [
+          [
+            2380409,
+            32542
+          ],
+          [
+            56502,
+            398362
+          ]
+        ]
+      }
+    }
+  },
+  "threshold_sweep_iou": {
+    "valid": {
+      "0.1": 0.8018739545934768,
+      "0.15": 0.8170567611179043,
+      "0.2": 0.8253377537454026,
+      "0.25": 0.8302631127987228,
+      "0.3": 0.8335626103571967,
+      "0.35": 0.8353645986295163,
+      "0.4": 0.8360479753972322,
+      "0.45": 0.8356922637350115,
+      "0.5": 0.8345304823310612,
+      "0.55": 0.8325813931243106,
+      "0.6": 0.8297755867878437,
+      "0.65": 0.8263759172922562,
+      "0.7": 0.8220123232182793,
+      "0.75": 0.8164061435307586,
+      "0.8": 0.8091606221873434,
+      "0.85": 0.7992797131240088,
+      "0.9": 0.7850355076668263
+    },
+    "test": {
+      "0.1": 0.8137448196502886,
+      "0.15": 0.8199142732291697,
+      "0.2": 0.8227092718402538,
+      "0.25": 0.8242569611835942,
+      "0.3": 0.8249786997204146,
+      "0.35": 0.8250952779537981,
+      "0.4": 0.8248419866701108,
+      "0.45": 0.8242989551649321,
+      "0.5": 0.8233912854452009,
+      "0.55": 0.8222038777207712,
+      "0.6": 0.8205729953037727,
+      "0.65": 0.818647262483374,
+      "0.7": 0.8162130348001726,
+      "0.75": 0.8129997182997291,
+      "0.8": 0.8087484039362365,
+      "0.85": 0.8027328006333776,
+      "0.9": 0.7933137751072336
+    },
+    "bolivia": {
+      "0.1": 0.8067066872604102,
+      "0.15": 0.8120365172110928,
+      "0.2": 0.8149300093980314,
+      "0.25": 0.8163653739109269,
+      "0.3": 0.8173812762315388,
+      "0.35": 0.8179000865226779,
+      "0.4": 0.8180986701300602,
+      "0.45": 0.8179457953394124,
+      "0.5": 0.8173104147261215,
+      "0.55": 0.816475102101372,
+      "0.6": 0.815219010727056,
+      "0.65": 0.8137090087712554,
+      "0.7": 0.8116962798792933,
+      "0.75": 0.8090478177103096,
+      "0.8": 0.8050700166219692,
+      "0.85": 0.799475867445733,
+      "0.9": 0.7901437354142046
+    }
+  },
+  "val_selected_threshold": 0.4,
+  "splits_at_val_threshold": {
+    "valid": {
+      "iou_water": 0.8360479753972322,
+      "iou_not_water": 0.9780980447159489,
+      "miou": 0.9070730100565905,
+      "dice_water": 0.9107038449976796,
+      "f1_water": 0.9107038449976795,
+      "precision_water": 0.9102054099516218,
+      "recall_water": 0.9112028262360873,
+      "pixel_accuracy": 0.9802984273006902,
+      "omission_error": 0.08879717376391276,
+      "commission_error": 0.08979459004837824,
+      "valid_pixels": 20294725,
+      "water_fraction_gt": 0.1102554974260553,
+      "confusion_matrix": [
+        [
+          17855975,
+          201145
+        ],
+        [
+          198693,
+          2038912
+        ]
+      ]
+    },
+    "test": {
+      "iou_water": 0.8248419866701108,
+      "iou_not_water": 0.9737030285731407,
+      "miou": 0.8992725076216257,
+      "dice_water": 0.9040146957329113,
+      "f1_water": 0.9040146957329113,
+      "precision_water": 0.9282290403728327,
+      "recall_water": 0.8810315728024735,
+      "pixel_accuracy": 0.9766007012498241,
+      "omission_error": 0.11896842719752652,
+      "commission_error": 0.07177095962716726,
+      "valid_pixels": 20517367,
+      "water_fraction_gt": 0.1250697031446579,
+      "confusion_matrix": [
+        [
+          17776459,
+          174807
+        ],
+        [
+          305285,
+          2260816
+        ]
+      ]
+    },
+    "bolivia": {
+      "iou_water": 0.8180986701300602,
+      "iou_not_water": 0.9636978422168752,
+      "miou": 0.8908982561734677,
+      "dice_water": 0.8999496931280813,
+      "f1_water": 0.8999496931280814,
+      "precision_water": 0.9155252180163131,
+      "recall_water": 0.8848952653980091,
+      "pixel_accuracy": 0.9687929660734741,
+      "omission_error": 0.11510473460199093,
+      "commission_error": 0.08447478198368688,
+      "valid_pixels": 2867815,
+      "water_fraction_gt": 0.1586099521761341,
+      "confusion_matrix": [
+        [
+          2375812,
+          37139
+        ],
+        [
+          52357,
+          402507
+        ]
+      ]
+    }
+  },
+  "per_event_at_val_threshold": {
+    "test": {
+      "Ghana": {
+        "iou_water": 0.5559099913100269,
+        "iou_not_water": 0.9594866812778607,
+        "miou": 0.7576983362939438,
+        "dice_water": 0.7145785995524951,
+        "f1_water": 0.7145785995524951,
+        "precision_water": 0.880320694724606,
+        "recall_water": 0.6013580974957523,
+        "pixel_accuracy": 0.9614421210043597,
+        "omission_error": 0.3986419025042477,
+        "commission_error": 0.11967930527539403,
+        "valid_pixels": 2133857,
+        "water_fraction_gt": 0.08026264177965065,
+        "confusion_matrix": [
+          [
+            1948586,
+            14002
+          ],
+          [
+            68275,
+            102994
+          ]
+        ]
+      },
+      "India": {
+        "iou_water": 0.9064980453371275,
+        "iou_not_water": 0.9736415694261364,
+        "miou": 0.940069807381632,
+        "dice_water": 0.9509561759627514,
+        "f1_water": 0.9509561759627515,
+        "precision_water": 0.9460761274808038,
+        "recall_water": 0.9558868299959068,
+        "pixel_accuracy": 0.9790063669138829,
+        "omission_error": 0.044113170004093184,
+        "commission_error": 0.053923872519196225,
+        "valid_pixels": 3224168,
+        "water_fraction_gt": 0.2129253190280407,
+        "confusion_matrix": [
+          [
+            2500258,
+            37403
+          ],
+          [
+            30284,
+            656223
+          ]
+        ]
+      },
+      "Mekong": {
+        "iou_water": 0.9408284023668639,
+        "iou_not_water": 0.9897482355520947,
+        "miou": 0.9652883189594793,
+        "dice_water": 0.9695121951219512,
+        "f1_water": 0.9695121951219513,
+        "precision_water": 0.9705516561119609,
+        "recall_water": 0.9684749582756801,
+        "pixel_accuracy": 0.9911850924154636,
+        "omission_error": 0.03152504172431993,
+        "commission_error": 0.029448343888039113,
+        "valid_pixels": 1453220,
+        "water_fraction_gt": 0.14471931297394752,
+        "confusion_matrix": [
+          [
+            1236731,
+            6180
+          ],
+          [
+            6630,
+            203679
+          ]
+        ]
+      },
+      "Nigeria": {
+        "iou_water": 0.9403021327942582,
+        "iou_not_water": 0.9880971165307758,
+        "miou": 0.9641996246625171,
+        "dice_water": 0.9692326951577536,
+        "f1_water": 0.9692326951577537,
+        "precision_water": 0.9649114343375867,
+        "recall_water": 0.9735928347747075,
+        "pixel_accuracy": 0.9899763716544052,
+        "omission_error": 0.026407165225292465,
+        "commission_error": 0.035088565662413265,
+        "valid_pixels": 760104,
+        "water_fraction_gt": 0.1621646511530001,
+        "confusion_matrix": [
+          [
+            632478,
+            4364
+          ],
+          [
+            3255,
+            120007
+          ]
+        ]
+      },
+      "Pakistan": {
+        "iou_water": 0.632854187611167,
+        "iou_not_water": 0.9222498922710491,
+        "miou": 0.777552039941108,
+        "dice_water": 0.7751508890539944,
+        "f1_water": 0.7751508890539944,
+        "precision_water": 0.942425900067658,
+        "recall_water": 0.6583055551365782,
+        "pixel_accuracy": 0.931438438015604,
+        "omission_error": 0.34169444486342176,
+        "commission_error": 0.05757409993234198,
+        "valid_pixels": 1107924,
+        "water_fraction_gt": 0.17952224159779911,
+        "confusion_matrix": [
+          [
+            901028,
+            7999
+          ],
+          [
+            67962,
+            130935
+          ]
+        ]
+      },
+      "Paraguay": {
+        "iou_water": 0.5974458416578524,
+        "iou_not_water": 0.9639833343741915,
+        "miou": 0.780714588016022,
+        "dice_water": 0.7480013732895189,
+        "f1_water": 0.7480013732895188,
+        "precision_water": 0.8089974875704662,
+        "recall_water": 0.6955582551443059,
+        "pixel_accuracy": 0.9658108697092157,
+        "omission_error": 0.3044417448556941,
+        "commission_error": 0.19100251242953384,
+        "valid_pixels": 3306197,
+        "water_fraction_gt": 0.07295058340443718,
+        "confusion_matrix": [
+          [
+            3025400,
+            39608
+          ],
+          [
+            73428,
+            167761
+          ]
+        ]
+      },
+      "Somalia": {
+        "iou_water": 0.8304133686937467,
+        "iou_not_water": 0.9867033724878149,
+        "miou": 0.9085583705907808,
+        "dice_water": 0.9073506377265608,
+        "f1_water": 0.9073506377265607,
+        "precision_water": 0.8805919909659485,
+        "recall_water": 0.9357864857380227,
+        "pixel_accuracy": 0.9875161870476483,
+        "omission_error": 0.06421351426197729,
+        "commission_error": 0.11940800903405142,
+        "valid_pixels": 1326678,
+        "water_fraction_gt": 0.06532406507080091,
+        "confusion_matrix": [
+          [
+            1229017,
+            10997
+          ],
+          [
+            5565,
+            81099
+          ]
+        ]
+      },
+      "Spain": {
+        "iou_water": 0.8564134521190113,
+        "iou_not_water": 0.9512170684064062,
+        "miou": 0.9038152602627088,
+        "dice_water": 0.9226537882942557,
+        "f1_water": 0.9226537882942557,
+        "precision_water": 0.8988544789978844,
+        "recall_water": 0.9477476608195433,
+        "pixel_accuracy": 0.9622119803227751,
+        "omission_error": 0.05225233918045674,
+        "commission_error": 0.10114552100211556,
+        "valid_pixels": 1481713,
+        "water_fraction_gt": 0.23781056115455557,
+        "confusion_matrix": [
+          [
+            1091767,
+            37579
+          ],
+          [
+            18412,
+            333955
+          ]
+        ]
+      },
+      "Sri-Lanka": {
+        "iou_water": 0.9339542059026035,
+        "iou_not_water": 0.9849299712608717,
+        "miou": 0.9594420885817376,
+        "dice_water": 0.9658493495369131,
+        "f1_water": 0.9658493495369131,
+        "precision_water": 0.9833457334172724,
+        "recall_water": 0.9489646974044452,
+        "pixel_accuracy": 0.9875773131631016,
+        "omission_error": 0.05103530259555476,
+        "commission_error": 0.016654266582727638,
+        "valid_pixels": 2053984,
+        "water_fraction_gt": 0.18511682661598142,
+        "confusion_matrix": [
+          [
+            1667646,
+            6111
+          ],
+          [
+            19405,
+            360822
+          ]
+        ]
+      },
+      "USA": {
+        "iou_water": 0.8203359423373077,
+        "iou_not_water": 0.9936534348649158,
+        "miou": 0.9069946886011118,
+        "dice_water": 0.9013017028977607,
+        "f1_water": 0.9013017028977608,
+        "precision_water": 0.907256046705588,
+        "recall_water": 0.8954250064985703,
+        "pixel_accuracy": 0.9938321666963708,
+        "omission_error": 0.10457499350142968,
+        "commission_error": 0.09274395329441201,
+        "valid_pixels": 3669522,
+        "water_fraction_gt": 0.03145096282295078,
+        "confusion_matrix": [
+          [
+            3543548,
+            10564
+          ],
+          [
+            12069,
+            103341
+          ]
+        ]
+      }
+    },
+    "bolivia": {
+      "Bolivia": {
+        "iou_water": 0.8180986701300602,
+        "iou_not_water": 0.9636978422168752,
+        "miou": 0.8908982561734677,
+        "dice_water": 0.8999496931280813,
+        "f1_water": 0.8999496931280814,
+        "precision_water": 0.9155252180163131,
+        "recall_water": 0.8848952653980091,
+        "pixel_accuracy": 0.9687929660734741,
+        "omission_error": 0.11510473460199093,
+        "commission_error": 0.08447478198368688,
+        "valid_pixels": 2867815,
+        "water_fraction_gt": 0.1586099521761341,
+        "confusion_matrix": [
+          [
+            2375812,
+            37139
+          ],
+          [
+            52357,
+            402507
+          ]
+        ]
+      }
+    }
+  },
+  "inference_peak_gpu_mem_mib": 258,
+  "latency": {
+    "input": "1x15x512x512",
+    "batch_size": 1,
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+    "precision": "fp16 autocast",
+    "model_only_ms_mean": 16.744520000065677,
+    "model_only_ms_p50": 15.93854999737232,
+    "model_only_ms_p95": 17.967390000558225,
+    "end_to_end_ms_mean": 58.08221000042977,
+    "end_to_end_includes": "normalisation of an in-memory chip + tiled inference + sigmoid + copy to CPU (excludes file decoding)",
+    "throughput_fps_model_only": 59.72103111920065
+  },
+  "sample_chips": [
+    "Ghana_359826",
+    "India_570384",
+    "Mekong_424793",
+    "Pakistan_70625",
+    "Paraguay_913449",
+    "USA_670826"
+  ]
+}

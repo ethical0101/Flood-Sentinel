@@ -10,6 +10,11 @@
 7. **RGB model and photos.** The RGB model is trained on 10 m Sentinel-2 true-colour chips. Drone, aerial or phone photos are out of distribution, and its output for them is indicative only. Such images also carry no geolocation.
 8. **Single seed.** Each configuration was trained once (seed 42). The differences between close models (for example S1+S2 versus S2) may lie within seed-to-seed variance.
 
+9. **The test split is not spatially independent** (found in the v2 audit). 42% of test chips lie within 10 km of a training chip, and 4 test footprints overlap a training chip, from the same events and dates. Test IoU is an in-distribution figure.
+10. **Inconclusive generalisation gains.** The v2 index-channel models improved Bolivia IoU by about 0.02, but that equals the seed-to-seed spread and did not replicate on WorldFloods. Confirming it would need several seeds per configuration and more independent events.
+11. **The external test covers only optical models.** WorldFloods has no Sentinel-1, so the default S1+S2 model could not be externally tested. Its ground truth also comes from Copernicus EMS mapping, sometimes made from other sensors or dates than the Sentinel-2 image.
+12. **Threshold default.** The dashboard's threshold slider defaults to 0.5; the validation-selected thresholds (0.40–0.60) are shown in the evaluation lab and must be set manually.
+
 ## Routing
 1. **Temporal mismatch.** Imagery dates from 2016–2019; the OSM road network was downloaded in 2026. Roads built or changed in between are not reconciled.
 2. **Water on a road ≠ impassable.** Depth, current, road elevation, embankments, bridges and culverts are unknown. Bridges over permanent water may be flagged as flooded.

@@ -1,0 +1,12 @@
+{
+  "python": "3.13.4",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "torch": "2.14.1+cu130",
+  "cuda_build": "13.0",
+  "cudnn": 92400,
+  "cuda_available": true,
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "vram_gib": 4.0,
+  "segmentation_models_pytorch": "0.5.0",
+  "driver": "610.74"
+}

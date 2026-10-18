@@ -6,6 +6,7 @@ Interactive API docs: http://127.0.0.1:8000/docs
 from __future__ import annotations
 
 import io
+import json
 import logging
 import math
 import re
@@ -23,7 +24,7 @@ from pydantic import BaseModel, Field, field_validator
 from backend.app.config import settings
 from backend.app.routing import graph_store
 from backend.app.routing.planner import NoRouteError, RiskSettings, plan
-from backend.app.services import areas, segmentation, status
+from backend.app.services import areas, diagnostics, history, reports, segmentation, status, training_control
 from backend.app.services.models import registry
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -50,11 +51,12 @@ class SafeJSONResponse(JSONResponse):
         return super().render(_finite(content))
 
 
-app = FastAPI(title="Flood Segmentation & Safe-Route API", version="1.0.0",
+app = FastAPI(title="Flood Segmentation & Safe-Route API", version=diagnostics.APP_VERSION,
               default_response_class=SafeJSONResponse,
               description="Sen1Floods11-trained water segmentation and flood-risk-aware routing on OSM roads. "
                           + DISCLAIMER)
 app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["GET", "POST"],
+                   expose_headers=["X-Request-ID", "Server-Timing", "Content-Disposition"],
                    allow_headers=["*"])
 
 
@@ -72,6 +74,8 @@ async def timing(request: Request, call_next):
     ms = (time.perf_counter() - t0) * 1e3
     response.headers["X-Request-ID"] = rid
     response.headers["Server-Timing"] = f"app;dur={ms:.1f}"
+    if request.url.path.startswith("/api") and response.status_code >= 400:
+        diagnostics.record_error(request.method, request.url.path, response.status_code)
     if request.url.path.startswith("/api"):
         log.info("%s %s -> %s %.1fms rid=%s", request.method, request.url.path, response.status_code, ms, rid)
     return response
@@ -85,6 +89,11 @@ async def input_error(_: Request, e: segmentation.InputError):
 @app.exception_handler(areas.AreaError)
 async def area_error(_: Request, e: areas.AreaError):
     return JSONResponse({"error": "area_error", "message": e.message}, status_code=e.status)
+
+
+@app.exception_handler(training_control.TrainingControlError)
+async def training_error(_: Request, e: training_control.TrainingControlError):
+    return JSONResponse({"error": "training_control", "message": e.message}, status_code=e.status)
 
 
 @app.exception_handler(NoRouteError)
@@ -359,7 +368,205 @@ def plan_route(req: PlanRequest):
                                f"({graph_store.FALLBACK_KMH:.0f} km/h fallback); flood slowdown is not modelled.")
     for r in [res["baseline"], res["risk_aware"], *res["alternatives"]]:
         r.pop("nodes", None)
+    a = areas.get_area(req.area_id)
+    res["area_id"] = req.area_id
+    res["area_name"] = a.get("name")
+    res["road_meta"] = a.get("road_meta")
+    res["imagery_event"] = a.get("event")
+    res["start"], res["end"] = req.start.model_dump(), req.end.model_dump()
+    res["created"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+    rid = reports.save_route(res)
+    history.add(rid, "route", res["created"], f"{a.get('name')} route", req.model if req.source == "model" else None,
+                req.source,
+                {"status": res["status"], "baseline_m": res["baseline"]["distance_m"],
+                 "risk_aware_m": res["risk_aware"]["distance_m"],
+                 "baseline_flooded_m": res["baseline"]["flooded_length_m"],
+                 "risk_aware_flooded_m": res["risk_aware"]["flooded_length_m"], "area_id": req.area_id,
+                 "alternatives": len(res["alternatives"])},
+                None, {k: v for k, v in req.model_dump().items() if k not in ("start", "end")})
     return res
+
+
+@app.get("/api/routes/areas/{area_id}/search", tags=["routing"])
+def area_search(area_id: str, q: str = Query(..., min_length=2, max_length=60)):
+    """Offline place search: road names in the cached OSM graph of this study area."""
+    a = areas.get_area(area_id)
+    G, *_ = areas.annotated_graph(area_id, "model" if "model" in a["sources"] else a["sources"][0], None, 0.5, 1)
+    ql = q.lower()
+    hits: dict[str, list] = {}
+    for u, v, d in G.edges(data=True):
+        n = d.get("name")
+        for name in (n if isinstance(n, list) else [n]):
+            if name and ql in str(name).lower() and (str(name) in hits or len(hits) < 15):
+                hits.setdefault(str(name), []).append(((G.nodes[u]["y"] + G.nodes[v]["y"]) / 2,
+                                                       (G.nodes[u]["x"] + G.nodes[v]["x"]) / 2))
+    return {"query": q, "source": "OpenStreetMap road names in the cached study-area graph (offline)",
+            "results": [{"name": k, "lat": round(sum(p[0] for p in v) / len(v), 6),
+                         "lon": round(sum(p[1] for p in v) / len(v), 6), "segments": len(v)}
+                        for k, v in sorted(hits.items())]}
+
+
+@app.get("/api/routes/results/{rid}", tags=["routing"])
+def route_result(rid: str):
+    r = reports.get_route(rid)
+    if r is None:
+        raise HTTPException(404, "route result not found")
+    return r
+
+
+@app.get("/api/routes/results/{rid}/export", tags=["routing"])
+def route_export(rid: str, format: Literal["json", "geojson", "html"] = "json"):
+    r = reports.get_route(rid)
+    if r is None:
+        raise HTTPException(404, "route result not found")
+    name = f"route_{rid[:8]}"
+    if format == "geojson":
+        return Response(json.dumps(reports.route_geojson(r), default=float), media_type="application/geo+json",
+                        headers={"Content-Disposition": f'attachment; filename="{name}.geojson"'})
+    if format == "html":
+        return Response(_route_report_html(r), media_type="text/html",
+                        headers={"Content-Disposition": f'attachment; filename="{name}_report.html"'})
+    return Response(json.dumps(r, default=float, indent=1), media_type="application/json",
+                    headers={"Content-Disposition": f'attachment; filename="{name}.json"'})
+
+
+def _route_report_html(r: dict) -> str:
+    try:
+        src = "ground_truth" if r["flood_layer"]["source"] == "ground_truth_label" else "model"
+        ov = areas.overlay_png(r["area_id"], src, None, r["flood_layer"]["threshold"])
+        bounds = list(areas.flood_layer(r["area_id"], src, None).bounds_wgs84())
+    except Exception:  # noqa: BLE001 - area no longer available: report without the map
+        ov, bounds = None, None
+    return reports.route_report(r, ov, bounds)
+
+
+# ----------------------------------------------------------------------------- history & reports
+@app.get("/api/history", tags=["history"])
+def history_list(kind: Literal["segmentation", "route"] | None = None, q: str | None = Query(None, max_length=60),
+                 limit: int = Query(50, ge=1, le=500), offset: int = Query(0, ge=0)):
+    out = history.list_(kind, limit, offset, q)
+    for it in out["items"]:
+        it["available"] = (segmentation.get_result(it["id"]) is not None if it["kind"] == "segmentation"
+                           else reports.get_route(it["id"]) is not None)
+    return out
+
+
+@app.get("/api/history/export", tags=["history"])
+def history_export(format: Literal["csv", "json"] = "csv", kind: Literal["segmentation", "route"] | None = None):
+    body, mt = history.export(format, kind)
+    return Response(body, media_type=mt,
+                    headers={"Content-Disposition": f'attachment; filename="flood_analysis_history.{format}"'})
+
+
+@app.get("/api/history/{hid}", tags=["history"])
+def history_item(hid: str):
+    it = history.get(hid)
+    if it is None:
+        raise HTTPException(404, "history item not found")
+    it["detail"] = segmentation.get_result(hid) if it["kind"] == "segmentation" else reports.get_route(hid)
+    it["available"] = it["detail"] is not None
+    return it
+
+
+@app.get("/api/reports/{hid}", tags=["history"])
+def report(hid: str):
+    """Self-contained HTML report (images embedded) for one segmentation or route analysis."""
+    it = history.get(hid)
+    if it is None:
+        raise HTTPException(404, "history item not found")
+    if it["kind"] == "segmentation":
+        res = segmentation.get_result(hid)
+        if res is None:
+            raise HTTPException(410, "result files were pruned; only the history metadata remains")
+        body = reports.segmentation_report(res, segmentation.results_dir() / hid)
+    else:
+        r = reports.get_route(hid)
+        if r is None:
+            raise HTTPException(410, "route result no longer available")
+        body = _route_report_html(r)
+    return Response(body, media_type="text/html",
+                    headers={"Content-Disposition": f'attachment; filename="flood_report_{hid[:8]}.html"'})
+
+
+# ----------------------------------------------------------------------------- experiments, diagnostics, control
+@app.get("/api/experiments", tags=["evaluation"])
+def experiments():
+    from training.registry import build
+
+    return {"experiments": build()}
+
+
+@app.get("/api/evaluation/external", tags=["evaluation"])
+def external_evaluation():
+    w = status._read(settings.artifacts / "audit" / "weakness_analysis.json")
+    weak = None
+    if w:
+        weak = {"data": w["data"], "valid_selected_threshold": w["model"].get("valid_selected_threshold"),
+                "fn_rate_by_stratum": {s: w["model"][s]["fn_rate_by_stratum"] for s in ("valid", "test", "bolivia")},
+                "ece": {s: w["model"][s]["ece_10bin"] for s in ("valid", "test", "bolivia")},
+                "reliability": {s: w["model"][s]["reliability"] for s in ("valid", "test", "bolivia")}}
+    return {"worldfloods": status._read(settings.artifacts / "worldfloods_evaluation.json"),
+            "bootstrap": status._read(settings.artifacts / "v2_bootstrap.json"),
+            "audit": status._read(settings.artifacts / "audit" / "reproduction.json"), "weakness_analysis": weak}
+
+
+@app.get("/api/diagnostics", tags=["status"])
+def run_diagnostics():
+    return diagnostics.run_diagnostics()
+
+
+@app.get("/api/warnings", tags=["status"])
+def warnings_feed():
+    return {"warnings": diagnostics.warnings()}
+
+
+@app.get("/api/version", tags=["status"])
+def version():
+    return diagnostics.versions()
+
+
+@app.get("/api/segmentation/formats", tags=["segmentation"])
+def formats():
+    return {"max_upload_mb": settings.max_upload_mb, "max_pixels": settings.max_image_pixels,
+            "min_side_px": settings.min_image_side, "formats": [
+                {"format": "GeoTIFF, 2 bands", "interpretation": "Sentinel-1 VV, VH backscatter in dB "
+                                                               "(linear power is converted)",
+                 "models": ["s1"], "georeferenced": "yes"},
+                {"format": "GeoTIFF, 13 bands", "interpretation": "Sentinel-2 L1C B1..B12 incl. B8A, "
+                                                                "reflectance x10000 or 0-1",
+                 "models": ["s2", "s2i", "rgb"], "georeferenced": "yes"},
+                {"format": "GeoTIFF, 15 bands", "interpretation": "Sentinel-1 (2 bands) followed by Sentinel-2 (13)",
+                 "models": ["s1s2", "s1s2i", "s2", "s2i", "s1", "rgb"], "georeferenced": "yes"},
+                {"format": "GeoTIFF / PNG / JPEG, 3-4 bands", "interpretation": "RGB (alpha ignored); per-image stretch",
+                 "models": ["rgb"], "georeferenced": "GeoTIFF only"}],
+            "notes": ["The band count decides the interpretation; band order must follow this table.",
+                      "Only GeoTIFFs with a CRS and geotransform can be mapped, measured in km² or routed.",
+                      "PNG/JPEG photos are outside the training distribution (10 m satellite imagery)."]}
+
+
+class TrainStart(BaseModel):
+    run: str = Field(max_length=80)
+    confirm: str = Field(max_length=80)
+
+
+@app.get("/api/training/presets", tags=["training"])
+def training_presets():
+    p = training_control.presets()
+    return {"presets": [{"run": k, "overrides": v,
+                         "state": (status._read(settings.artifacts / "runs" / k / "status.json") or {}).get("state", "new")}
+                        for k, v in p.items()], "preflight": training_control.preflight()}
+
+
+@app.post("/api/training/start", tags=["training"])
+def training_start(req: TrainStart):
+    return training_control.start(req.run, req.confirm)
+
+
+@app.post("/api/training/stop", tags=["training"])
+def training_stop(req: TrainStart):
+    if req.confirm != req.run:
+        raise HTTPException(400, "confirmation does not match the run name")
+    return training_control.stop(req.run)
 
 
 # ----------------------------------------------------------------------------- frontend (production build)

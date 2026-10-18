@@ -51,7 +51,8 @@ class SceneInput:
         return self.crs is not None and self.transform is not None
 
     def available_modalities(self) -> list[str]:
-        return {"s1s2": ["s1s2", "s2", "s1", "rgb"], "s2": ["s2", "rgb"], "s1": ["s1"], "rgb": ["rgb"]}[self.kind]
+        return {"s1s2": ["s1s2", "s1s2i", "s2", "s2i", "s1", "rgb"], "s2": ["s2", "s2i", "rgb"], "s1": ["s1"],
+                "rgb": ["rgb"]}[self.kind]
 
     def preview_rgb(self) -> np.ndarray:
         """(H,W,3) uint8 for display. S1-only scenes use a VV/VH false-colour composite."""
